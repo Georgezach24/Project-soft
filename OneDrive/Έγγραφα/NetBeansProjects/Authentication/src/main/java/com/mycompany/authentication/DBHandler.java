@@ -32,10 +32,19 @@ public class DBHandler extends JFrame{
         user.setPassword(password);
         user.setEmail(email);
         user.setPhone(phone);
-        em.persist(user);
-        et.commit();
+        if(!user.getUsername().isBlank() && !user.getPassword().isBlank() && !user.getEmail().isBlank())
+        {
+            em.persist(user);
+            et.commit();
             et = em.getTransaction();
             et.begin();
+        }
+        else
+        {
+            JFrame f = new JFrame();
+            JOptionPane.showMessageDialog(f,"You cannot Register without providing the adequate data");
+        }
+        
         }catch(Exception e)
         {
             JFrame f = new JFrame();

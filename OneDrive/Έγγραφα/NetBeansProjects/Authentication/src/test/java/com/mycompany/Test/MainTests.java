@@ -11,6 +11,12 @@ import static org.junit.Assert.*;
  *
  * @author Giorgos Zachos
  */
+
 public class MainTests {
     
+    @Test
+    public void testRegister()
+    {
+        
+    }
 }
