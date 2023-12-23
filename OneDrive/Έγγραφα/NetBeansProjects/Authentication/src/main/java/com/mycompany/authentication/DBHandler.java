@@ -18,6 +18,7 @@ import javax.swing.JOptionPane;
  */
 public class DBHandler extends JFrame{
     public static EntityManagerFactory ENITY_MANAGER_FACTORY = Persistence.createEntityManagerFactory("Authentication");
+    public static int loginTries = 2;
     
     public static void registerUser(String username , String password , String email , String phone)
     {
@@ -67,11 +68,15 @@ public class DBHandler extends JFrame{
             user = tq.getSingleResult();
             JFrame f = new JFrame();
             JOptionPane.showMessageDialog(f, "Login succesfull");
+            AuthenticatedUserMainWindow aumw = new AuthenticatedUserMainWindow();
+            aumw.setVisible(true);
+            loginTries = 2;
         }catch(Exception e)
         {
             e.printStackTrace();
+            loginTries -- ;
             JFrame f = new JFrame();
-            JOptionPane.showMessageDialog(f,"Error Loging User");
+            JOptionPane.showMessageDialog(f,"Invalid username or password");
         }
         finally{
             em.close();

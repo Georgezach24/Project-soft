@@ -11,8 +11,8 @@ package com.mycompany.authentication;
 public class Run {
 
     public static void main(String[] args) {
-        MainWindow mw = new MainWindow();
-        mw.setVisible(true);
+        StartingWindow sw = new StartingWindow();
+        sw.setVisible(true);
         
     }
 }
