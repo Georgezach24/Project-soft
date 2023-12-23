@@ -16,7 +16,6 @@ public class MainWindow extends javax.swing.JFrame {
     public MainWindow() {
         initComponents();
     }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -53,6 +52,11 @@ public class MainWindow extends javax.swing.JFrame {
         jButton1.setBackground(new java.awt.Color(46, 53, 59));
         jButton1.setForeground(new java.awt.Color(255, 255, 255));
         jButton1.setLabel("Login");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setBackground(new java.awt.Color(46, 53, 59));
         jButton2.setForeground(new java.awt.Color(255, 255, 255));
@@ -238,6 +242,16 @@ public class MainWindow extends javax.swing.JFrame {
     private void textField5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textField5ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_textField5ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        String username = textField2.getText();
+        String password = textField3.getText();
+        
+        DBHandler.loginUser(username, password);
+        textField2.setText("");
+        textField3.setText("");
+        System.exit(0);
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments

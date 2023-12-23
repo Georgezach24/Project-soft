@@ -8,6 +8,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import javax.persistence.TypedQuery;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -39,6 +40,33 @@ public class DBHandler extends JFrame{
         {
             JFrame f = new JFrame();
             JOptionPane.showMessageDialog(f,"Error registering User");
+        } 
+        finally{
+            em.close();
         }
+    }
+    
+    public static void loginUser(String username , String password)
+    {
+        EntityManager em = ENITY_MANAGER_FACTORY.createEntityManager();
+        String query = "SELECT u FROM User u WHERE u.username =:username AND u.password =:password";
+        TypedQuery<User> tq = em.createQuery(query, User.class);
+        tq.setParameter("username", username);
+        tq.setParameter("password", password);
+        User user = null;
+        try{
+            user = tq.getSingleResult();
+            JFrame f = new JFrame();
+            JOptionPane.showMessageDialog(f, "Login succesfull");
+        }catch(Exception e)
+        {
+            e.printStackTrace();
+            JFrame f = new JFrame();
+            JOptionPane.showMessageDialog(f,"Error Loging User");
+        }
+        finally{
+            em.close();
+        }
+        
     }
 }
