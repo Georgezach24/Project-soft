@@ -35,7 +35,15 @@ public class DBHandler extends JFrame{
             user.setPassword(password);
             user.setEmail(email);
             user.setPhone(phone);
-            if(!user.getUsername().isBlank() && !user.getPassword().isBlank() && !user.getEmail().isBlank())
+//--------- Χρήση στον έλεγχο για το αν υπάρχει ήδη εγγεγραμμένος χρήστης.-----
+            String query = "SELECT u FROM User u WHERE u.username =:username "; 
+            TypedQuery<User> tq = em.createQuery(query, User.class);
+            tq.setParameter("username", username);          
+//-----------------------------------------------------------------------------
+            if(!user.getUsername().isBlank() && 
+            !user.getPassword().isBlank() && 
+            !user.getEmail().isBlank() && 
+            tq.getSingleResult().getUsername().isBlank())
             {
                 em.persist(user);
                 et.commit();
@@ -47,10 +55,14 @@ public class DBHandler extends JFrame{
                 sw.setVisible(true);
 
             }
+            else if (!user.getUsername().isBlank() && !user.getPassword().isBlank() && 
+            !user.getEmail().isBlank())
+            {
+                JOptionPane.showMessageDialog(f,"You cannot Register without providing the adequate data");
+            }
             else
             {
-
-                JOptionPane.showMessageDialog(f,"You cannot Register without providing the adequate data");
+                JOptionPane.showMessageDialog(f,"User is already register, try to login");
             }
 
         }   

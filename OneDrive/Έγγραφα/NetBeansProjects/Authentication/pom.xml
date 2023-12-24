@@ -33,4 +33,5 @@
         <maven.compiler.target>21</maven.compiler.target>
         <exec.mainClass>com.mycompany.authentication.Run</exec.mainClass>
     </properties>
+    <name>Conference-System</name>
 </project>
