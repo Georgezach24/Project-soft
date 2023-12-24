@@ -178,6 +178,7 @@ public class LoginWindow extends javax.swing.JFrame {
             StartingWindow sw = new StartingWindow();
             sw.setVisible(true);
             DBHandler.loginTries = 2;
+            System.out.print("lol");
         }
         else{
         String username = textField2.getText();
