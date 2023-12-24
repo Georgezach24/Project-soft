@@ -208,7 +208,7 @@ public class RegisterWindow extends javax.swing.JFrame {
         String password = textField3.getText();
         String email = textField4.getText();
         String phone = textField5.getText();
-        DBHandler.registerUser(username, password, email, phone);
+        DBHandler.registerUser(username, password, email, phone , this);
         textField2.setText("");
         textField3.setText("");
         textField4.setText("");

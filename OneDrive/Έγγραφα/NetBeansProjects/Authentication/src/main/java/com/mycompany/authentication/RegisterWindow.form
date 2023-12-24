@@ -276,9 +276,6 @@
             </Property>
             <Property name="text" type="java.lang.String" value="Register"/>
           </Properties>
-          <AccessibilityProperties>
-            <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="Register"/>
-          </AccessibilityProperties>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_SerializeTo" type="java.lang.String" value="MainWindow_label1"/>
           </AuxValues>

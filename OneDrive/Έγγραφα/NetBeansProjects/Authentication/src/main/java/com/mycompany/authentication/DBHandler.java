@@ -20,43 +20,52 @@ public class DBHandler extends JFrame{
     public static EntityManagerFactory ENITY_MANAGER_FACTORY = Persistence.createEntityManagerFactory("Authentication");
     public static int loginTries = 2;
     
-    public static void registerUser(String username , String password , String email , String phone)
+    public static void registerUser(String username , String password , String email , String phone , JFrame j)
     {
         EntityManager em = ENITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction et = null;
 
-        try{        
-        et = em.getTransaction();
-        et.begin();
-        User user = new User();
-        user.setUsername(username);
-        user.setPassword(password);
-        user.setEmail(email);
-        user.setPhone(phone);
-        if(!user.getUsername().isBlank() && !user.getPassword().isBlank() && !user.getEmail().isBlank())
-        {
-            em.persist(user);
-            et.commit();
-            et = em.getTransaction();
-            et.begin();
-        }
-        else
+        try
         {
             JFrame f = new JFrame();
-            JOptionPane.showMessageDialog(f,"You cannot Register without providing the adequate data");
-        }
-        
-        }catch(Exception e)
+            et = em.getTransaction();
+            et.begin();
+            User user = new User();
+            user.setUsername(username);
+            user.setPassword(password);
+            user.setEmail(email);
+            user.setPhone(phone);
+            if(!user.getUsername().isBlank() && !user.getPassword().isBlank() && !user.getEmail().isBlank())
+            {
+                em.persist(user);
+                et.commit();
+                et = em.getTransaction();
+                et.begin();
+                JOptionPane.showMessageDialog(f, "User registered succesfully!");
+                j.dispose();
+                StartingWindow sw = new StartingWindow();
+                sw.setVisible(true);
+
+            }
+            else
+            {
+
+                JOptionPane.showMessageDialog(f,"You cannot Register without providing the adequate data");
+            }
+
+        }   
+        catch(Exception e)
         {
             JFrame f = new JFrame();
             JOptionPane.showMessageDialog(f,"Error registering User");
         } 
-        finally{
+        finally
+        {
             em.close();
         }
     }
     
-    public static void loginUser(String username , String password)
+    public static void loginUser(String username , String password , JFrame j)
     {
         EntityManager em = ENITY_MANAGER_FACTORY.createEntityManager();
         String query = "SELECT u FROM User u WHERE u.username =:username AND u.password =:password";
@@ -68,6 +77,7 @@ public class DBHandler extends JFrame{
             user = tq.getSingleResult();
             JFrame f = new JFrame();
             JOptionPane.showMessageDialog(f, "Login succesfull");
+            j.dispose();
             AuthenticatedUserMainWindow aumw = new AuthenticatedUserMainWindow();
             aumw.setVisible(true);
             loginTries = 2;

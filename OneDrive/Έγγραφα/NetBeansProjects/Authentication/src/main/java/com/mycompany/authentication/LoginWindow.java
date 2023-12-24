@@ -182,7 +182,7 @@ public class LoginWindow extends javax.swing.JFrame {
         else{
         String username = textField2.getText();
         String password = textField3.getText();
-        DBHandler.loginUser(username, password);
+        DBHandler.loginUser(username, password , this);
         textField2.setText("");
         textField3.setText("");
         }
