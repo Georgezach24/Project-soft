@@ -22,25 +22,8 @@ import org.apache.http.impl.client.HttpClients;
 public class RestClient {
 
 	public static  boolean response = true;
-	
-   public static void main(String[] args) {
-   	Scanner scanner = new Scanner(System.in);
-   	registerRequest();
-       System.out.println("Username: ");
-       String username = scanner.nextLine();
-       System.out.println("Password: ");
-       String password = scanner.nextLine();
-       System.out.println("Rewrite Password: ");
-       String password_conf = scanner.nextLine();
-       System.out.println("Email: ");
-       String email = scanner.nextLine();
-       System.out.println("Phone: ");
-       String phone = scanner.nextLine();
-       registerPost(username,password,password_conf,email,phone);
-       scanner.close();
-   }
 
-   private static void registerRequest() {
+   public static void registerRequest() {
        HttpClient client = HttpClients.createDefault();
        HttpGet request = new HttpGet("http://localhost:8080/system/webapi/usermng/register");
        request.addHeader("accept", "text/plain");
@@ -61,7 +44,7 @@ public class RestClient {
        }
    }
 
-   private static void registerPost(String username , String password ,String password2, String email, String phone) {
+   public static void registerPost(String username , String password ,String password2, String email, String phone) {
 	   UserDBHandler.registerUser(username, password, password2 , email, phone);
 	  
 	   HttpClient client = HttpClients.createDefault();
