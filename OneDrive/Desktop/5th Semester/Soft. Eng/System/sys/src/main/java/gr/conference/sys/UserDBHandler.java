@@ -85,9 +85,9 @@ public static boolean loginUser(String username , String password)
        TypedQuery<User> tq = em.createQuery(query, User.class);
        tq.setParameter("username", username);
        tq.setParameter("password", password);
-       User user = null;
+       User logedUser = null;
        try{
-           user = tq.getSingleResult();
+    	   logedUser = tq.getSingleResult();
            loginTries = 2;
            return true;
        }catch(Exception e)
