@@ -92,7 +92,7 @@ public static boolean loginUser(String username , String password)
            return true;
        }catch(Exception e)
        {
-           e.printStackTrace();
+    	   System.out.println("User dosent exsist!");
            loginTries -- ;  
            
        }

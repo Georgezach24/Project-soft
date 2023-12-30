@@ -23,7 +23,6 @@ public class StartingScreen {
 			System.out.println("3. CONTINUE AS GUEST");
 			System.out.println("4. EXIT");
 			System.out.print("Your input >");
-			System.out.print("Your input >");
 			int input = scanner.nextInt();
 		
 		
