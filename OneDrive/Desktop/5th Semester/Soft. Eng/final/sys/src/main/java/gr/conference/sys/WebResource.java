@@ -36,7 +36,7 @@ public class WebResource
 	public String login(@PathParam("p1") String username ,@PathParam("p2") String password )
 	{
 		ResponseMessage msg = new ResponseMessage();
-		if(username.equals("admin") && password.equals("admin1"))
+		if(UserDBHandler.loginUser(username, password))
 		{
 			msg.setResponseCode("200");
 			msg.setResponseMessage("Succes!");

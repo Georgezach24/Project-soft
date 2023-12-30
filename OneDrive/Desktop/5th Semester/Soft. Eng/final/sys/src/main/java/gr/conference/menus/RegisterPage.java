@@ -4,6 +4,8 @@ import java.util.Scanner;
 
 import gr.conference.sys.RestClient;
 
+import gr.conference.sys.*;
+
 public class RegisterPage {
 	public RegisterPage()
 	{
@@ -26,6 +28,10 @@ public class RegisterPage {
 	    String phone = scanner.nextLine();
 	    RestClient.registerPost(username,password,password_conf,email,phone);
 	    scanner.close();
+	    
+	    StartingScreen ss;
+	    ss = new StartingScreen();
+	    
 	}
 			
 }

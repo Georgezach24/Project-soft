@@ -16,16 +16,17 @@ public class StartingScreen {
 		
 		System.out.println("------------------------------------------");
 		System.out.println("WELCOME TO THE CONFERENCE SYSTEM USER PAGE");
-		System.out.println("1. LOGIN");
-		System.out.println("2. REGISTER");
-		System.out.println("3. CONTINUE AS GUEST");
-		System.out.println("4. EXIT");
-		System.out.print("Your input >");
-		System.out.print("Your input >");
-		int input = scanner.nextInt();
-		
 		while(flag == 0)
 		{
+			System.out.println("1. LOGIN");
+			System.out.println("2. REGISTER");
+			System.out.println("3. CONTINUE AS GUEST");
+			System.out.println("4. EXIT");
+			System.out.print("Your input >");
+			System.out.print("Your input >");
+			int input = scanner.nextInt();
+		
+		
 			switch(input)
 			{
 				case 1:
