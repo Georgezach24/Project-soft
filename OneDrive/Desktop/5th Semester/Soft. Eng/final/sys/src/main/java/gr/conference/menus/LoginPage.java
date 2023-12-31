@@ -5,44 +5,53 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 import gr.conference.sys.RestClient;
+import gr.conference.sys.UserDBHandler;
 
 
 
 public class LoginPage {
 	
+	public static String username;
+	
 	public LoginPage()
 	{
 		loadPage();
+		
 	}
+	
 
-	private void loadPage() {
-	    Console console = System.console();
-	    if (console != null) {
-	        RestClient.loginRequest();
+	private void loadPage() 
+	{
+		Scanner scanner = new Scanner(System.in);
+	    RestClient.loginRequest();
+	    String username_local = "";
+		while(UserDBHandler.loginTries != 0)
+		{
 	        System.out.print("Username: ");
-	        String username = console.readLine();
-	        char[] passwordChars = console.readPassword("Password: ");
-
-	        String password = new String(passwordChars);
-
-	        RestClient.loginPost(username, password);
-
-	        // Clear the password characters from memory
-	        Arrays.fill(passwordChars, ' ');
-	    } else {
-	        // Fallback for environments where console is not available
-	        Scanner scanner = new Scanner(System.in);
-	        RestClient.loginRequest();
-	        System.out.print("Username: ");
-	        String username = scanner.nextLine();
+	        username_local = scanner.nextLine();
 	        System.out.print("Password: ");
 	        String password = scanner.nextLine();
-
-	        RestClient.loginPost(username, password);
-
-	        // Clear the password from memory (not as secure as char array, but a basic attempt)
-	        password = null;
+	        String ret = RestClient.loginPost(username_local, password);
+	        if(ret.equals("{\"responseMessage\":\"Succes!\",\"responseCode\":\"200\"}"))
+	        {
+	        	break;
+	        }
 	    }
+		scanner.close();
+		setUsername(username_local);
+		UserPage up = new UserPage();
 	}
 
+	public static String getUsername() {
+		return username;
+	}
+
+
+	public static void setUsername(String username_lc) {
+		username_lc = username;
+	}
+	
+	
 }
+
+

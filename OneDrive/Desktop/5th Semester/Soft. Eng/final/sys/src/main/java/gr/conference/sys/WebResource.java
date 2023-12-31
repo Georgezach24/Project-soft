@@ -57,7 +57,6 @@ public class WebResource
 			@PathParam("p2") String password , @PathParam("p3") String email ,@PathParam("p4") String phone )
 	{
 		ResponseMessage msg = new ResponseMessage();
-		System.out.print("debug");
 		if(UserDBHandler.loginUser(username, password))
 		{
 			msg.setResponseCode("200");

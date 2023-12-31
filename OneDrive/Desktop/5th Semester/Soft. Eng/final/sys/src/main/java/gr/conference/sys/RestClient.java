@@ -1,21 +1,18 @@
 package gr.conference.sys;
 
-/**
-*
-* @author Giorgos Zachos
-*/
+
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Scanner;
+
 
 import org.apache.http.HttpResponse;
-//import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-//import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
+
 
 
 
@@ -92,12 +89,12 @@ public class RestClient {
        }
    }
    
-   public static void loginPost(String username , String password)
+   public static String loginPost(String username , String password)
    {
 	   UserDBHandler.loginUser(username, password);
 		  
 	   HttpClient client = HttpClients.createDefault();
-       
+	   StringBuilder result = new StringBuilder();
        HttpPost request = new HttpPost("http://localhost:8080/system/webapi/usermng/login/" + username + "/" + password);
        request.addHeader("accept", "application/json");
 
@@ -107,7 +104,7 @@ public class RestClient {
            BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
 
            String line;
-           StringBuilder result = new StringBuilder();
+           
            while ((line = reader.readLine()) != null) {
                result.append(line);
            }
@@ -117,6 +114,8 @@ public class RestClient {
        } catch (IOException e) {
            e.printStackTrace();
        }
+       
+       return result.toString();
    }
 
 public static boolean isResponse() {
