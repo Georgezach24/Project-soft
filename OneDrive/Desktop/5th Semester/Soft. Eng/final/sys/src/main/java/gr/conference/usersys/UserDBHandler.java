@@ -1,4 +1,4 @@
-package gr.conference.sys;
+package gr.conference.usersys;
 
 /**
 *
@@ -100,13 +100,15 @@ public class UserDBHandler{
    
    
 
-public static boolean loginUser(String username , String password)
+   public static boolean loginUser(String username , String password)
    {
        EntityManager em = ENITY_MANAGER_FACTORY.createEntityManager();
-       String query = "SELECT u FROM User u WHERE u.username =:username AND u.password =:password";
+       String role = "USER";
+       String query = "SELECT u FROM User u WHERE u.username =:username AND u.password =:password AND u.role =:role";
        TypedQuery<User> tq = em.createQuery(query, User.class);
        tq.setParameter("username", username);
        tq.setParameter("password", password);
+       tq.setParameter("role", role);
        User logedUser = null;
        try{
     	   logedUser = tq.getSingleResult();
@@ -124,4 +126,69 @@ public static boolean loginUser(String username , String password)
        return false;
    }
    
+   public static boolean loginAdmin(String username , String password)
+   {
+       EntityManager em = ENITY_MANAGER_FACTORY.createEntityManager();
+       String role = "ADMIN";
+       String query = "SELECT u FROM User u WHERE u.username =:username AND u.password =:password AND u.role =:role";
+       TypedQuery<User> tq = em.createQuery(query, User.class);
+       tq.setParameter("username", username);
+       tq.setParameter("password", password);
+       tq.setParameter("role", role);
+       User logedUser = null;
+       try{
+    	   logedUser = tq.getSingleResult();
+           loginTries = 2;
+           return true;
+       }catch(Exception e)
+       {
+    	   System.out.println("ADMIN LOGIN ERROR");
+           loginTries -- ;  
+           
+       }
+       finally{
+           em.close();   
+       }
+       return false;
+   }
+   
+   public static void updateUserInfo(String username, String newUsername ,String newName, String newSurname, String newEmail, String newPhone) {
+	    EntityManager em = ENITY_MANAGER_FACTORY.createEntityManager();
+	    EntityTransaction et = em.getTransaction();
+	    try {
+	        et.begin();
+
+	        String query = "SELECT u FROM User u WHERE u.username = :username";
+	        TypedQuery<User> getUserQuery = em.createQuery(query, User.class);
+	        getUserQuery.setParameter("username", username);
+	        User userToUpdate = getUserQuery.getSingleResult();
+	        	if(newUsername != null) {
+	        		userToUpdate.setUsername(newUsername);
+	        	}
+	            if (newName != null) {
+	                userToUpdate.setName(newName);
+	            }
+	            if (newSurname != null) {
+	                userToUpdate.setSurname(newSurname);
+	            }
+	            if (newEmail != null) {
+	                userToUpdate.setEmail(newEmail);
+	            }
+	            if (newPhone != null) {
+	                userToUpdate.setPhone(newPhone);
+	            }
+
+	            em.merge(userToUpdate);
+	            et.commit();
+	        
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        if (et.isActive()) {
+	            et.rollback();
+	        }
+	    } finally {
+	        em.close();
+	    }
+	}
+
 }

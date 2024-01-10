@@ -1,4 +1,4 @@
-package gr.conference.sys;
+package gr.conference.usersys;
 
 /**
 *
@@ -23,11 +23,39 @@ public class WebResource
 	}
 	
 	@GET
+	@Path("/adminlogin")
+	@Produces("text/plain")
+	public String requestAdminLogin()
+	{	
+		return "Admin Login is required!";
+	}
+	
+	@GET
 	@Path("/register")
 	@Produces("text/plain")
 	public String requestRegister()
 	{	
 		return "Register new User";
+	}
+	
+	@GET
+	@Path("/update")
+	@Produces("text/plain")
+	public String requestUserInfoUpdate()
+	{	
+		return "Fill the information correctlly in order to update";
+	}
+	
+	@POST
+	@Path("/update/{p1}/{p2}/{p3}/{p4}/{p5}")
+	@Produces("application/json")
+	public String userInformationUpdate(@PathParam("p1") String username ,
+			@PathParam("p2") String name , @PathParam("p3") String surname ,
+			@PathParam("p4") String email,@PathParam("p5") String phone)
+	{
+		ResponseMessage msgMessage = new ResponseMessage();
+		
+		return "DEBUG IN PROGGRESS";
 	}
 	
 	@POST
@@ -37,6 +65,26 @@ public class WebResource
 	{
 		ResponseMessage msg = new ResponseMessage();
 		if(UserDBHandler.loginUser(username, password))
+		{
+			msg.setResponseCode("200");
+			msg.setResponseMessage("Succes!");
+		}
+		else
+		{
+			msg.setResponseCode("-1");
+			msg.setResponseMessage("Wrong username or password!");
+		}
+		
+		return new Gson().toJson(msg);
+	}
+	
+	@POST
+	@Path("/adminlogin/{p1}/{p2}")
+	@Produces("application/json")
+	public String adminLogin(@PathParam("p1") String username ,@PathParam("p2") String password )
+	{
+		ResponseMessage msg = new ResponseMessage();
+		if(UserDBHandler.loginAdmin(username, password))
 		{
 			msg.setResponseCode("200");
 			msg.setResponseMessage("Succes!");

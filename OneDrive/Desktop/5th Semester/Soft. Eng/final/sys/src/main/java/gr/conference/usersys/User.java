@@ -1,4 +1,4 @@
-package gr.conference.sys;
+package gr.conference.usersys;
 
 /**
 *

@@ -15,7 +15,7 @@ public class StartingScreen {
 	{
 		Scanner scanner = new Scanner(System.in);
 		int flag = 0;
-		
+		LoginPage lp = new LoginPage();
 		
 		System.out.println("------------------------------------------");
 		System.out.println("WELCOME TO THE CONFERENCE SYSTEM USER PAGE");
@@ -24,7 +24,8 @@ public class StartingScreen {
 			System.out.println("1. LOGIN");
 			System.out.println("2. REGISTER");
 			System.out.println("3. CONTINUE AS GUEST");
-			System.out.println("4. EXIT");
+			System.out.println("4. ADMIN LOGIN");
+			System.out.println("5. EXIT");
 			System.out.print("Your input >");
 			int input = scanner.nextInt();
 		
@@ -33,8 +34,7 @@ public class StartingScreen {
 			{
 				case 1:
 					flag = 1;
-					LoginPage lp = new LoginPage();
-					lp.loadPage();
+					lp.loadPageUser();
 					break;
 				case 2:
 					flag = 1;
@@ -43,8 +43,12 @@ public class StartingScreen {
 				case 3:
 					flag = 1;
 					//TODO Φτιάξε τι θα γίνεται σε περίπτωση visitor.
-					break;
+					break;	
 				case 4:
+					flag =1;
+					lp.loadPageAdmin();
+					break;
+				case 5:
 					flag = 1;
 					System.exit(0);
 					break;

@@ -2,11 +2,10 @@ package gr.conference.menus;
 
 import java.util.Arrays;
 import java.util.Scanner;
+
+import gr.conference.usersys.*;
+
 import java.io.Console;
-
-import gr.conference.sys.RestClient;
-
-import gr.conference.sys.*;
 
 public class RegisterPage {
 	public RegisterPage()
