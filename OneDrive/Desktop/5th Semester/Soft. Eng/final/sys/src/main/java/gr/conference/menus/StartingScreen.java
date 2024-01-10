@@ -4,6 +4,8 @@ import java.util.Scanner;
 
 public class StartingScreen {
 	
+	public String user;
+	
 	public StartingScreen()
 	{
 		loadMenu();
@@ -13,6 +15,7 @@ public class StartingScreen {
 	{
 		Scanner scanner = new Scanner(System.in);
 		int flag = 0;
+		
 		
 		System.out.println("------------------------------------------");
 		System.out.println("WELCOME TO THE CONFERENCE SYSTEM USER PAGE");
@@ -31,6 +34,7 @@ public class StartingScreen {
 				case 1:
 					flag = 1;
 					LoginPage lp = new LoginPage();
+					lp.loadPage();
 					break;
 				case 2:
 					flag = 1;
@@ -51,4 +55,9 @@ public class StartingScreen {
 		}
 		
 	}
+
+	public String getUser() {
+		return user;
+	}
+	
 }

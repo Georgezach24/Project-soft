@@ -11,16 +11,11 @@ import gr.conference.sys.UserDBHandler;
 
 public class LoginPage {
 	
-	public static String username;
+	public String username;
 	
-	public LoginPage()
-	{
-		loadPage();
-		
-	}
 	
 
-	private void loadPage() 
+	public void loadPage() 
 	{
 		Scanner scanner = new Scanner(System.in);
 	    RestClient.loginRequest();
@@ -37,21 +32,10 @@ public class LoginPage {
 	        	break;
 	        }
 	    }
+		username = username_local;
+		UserPage uPage = new UserPage(username);
 		scanner.close();
-		setUsername(username_local);
-		UserPage up = new UserPage();
-	}
-
-	public static String getUsername() {
-		return username;
-	}
-
-
-	public static void setUsername(String username_lc) {
-		username_lc = username;
-	}
-	
-	
+	}	
 }
 
 

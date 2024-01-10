@@ -33,15 +33,39 @@ public class UserDBHandler{
        return username.matches(usernamePattern);
    }
 
-  
+  public static void registerAdmin()
+  {
+	  String usernameString = "admin";
+	  String passwdString = "admin";
+	  EntityManager em = ENITY_MANAGER_FACTORY.createEntityManager();
+	  EntityTransaction et = em.getTransaction();
+	  try {
+		et.begin();
+		User adminUser = new User();
+		
+		adminUser.setUsername(usernameString);
+		adminUser.setPassword(passwdString);
+		adminUser.setRole("ADMIN");
+		
+		em.persist(adminUser);
+		
+		et.commit();
+	  } catch (Exception e) {
+		  if (et != null && et.isActive()) 
+		  {
+			  et.rollback();
+	      }
+	  }finally {
+	        em.close();
+	    }
+  }
   
    public static void registerUser(String username, String password, String password2, String email, String phone) {
    EntityManager em = ENITY_MANAGER_FACTORY.createEntityManager();
    EntityTransaction et = em.getTransaction();
-   JFrame j = new JFrame();
    try {
        et.begin();
-       // Check if the user already exists
+
        String query = "SELECT COUNT(u) FROM User u WHERE u.username = :username";
        TypedQuery<Long> countQuery = em.createQuery(query, Long.class);
        countQuery.setParameter("username", username);
@@ -51,7 +75,6 @@ public class UserDBHandler{
     		   && isPasswordValid(password) && isUsernameValid(username)
     		   && password.equals(password2)) 
        {
-           // User does not exist, proceed with registration
            User newUser = new User();
            newUser.setName(null);
            newUser.setSurname(null);
@@ -62,7 +85,6 @@ public class UserDBHandler{
            newUser.setUser_status("ACTIVE");
            newUser.setRole("USER");
            
-
            em.persist(newUser);
            et.commit();
        } 
@@ -97,8 +119,7 @@ public static boolean loginUser(String username , String password)
            
        }
        finally{
-           em.close();
-           
+           em.close();   
        }
        return false;
    }

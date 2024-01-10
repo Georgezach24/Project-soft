@@ -1,16 +1,15 @@
 package gr.conference.menus;
 
 public class UserPage {
-	public UserPage()
+	public UserPage(String usernameString)
 	{
-		loadPage();
+		loadPage(usernameString);
 	}
 	
-	private void loadPage()
+	private void loadPage(String uString)
 	{
-		String name = LoginPage.getUsername();
 		System.out.println("--------------------");
-		System.out.println("WELCOME " + name);
+		System.out.println("WELCOME " + uString);
 		System.out.println("--------------------");
 	}
 }
