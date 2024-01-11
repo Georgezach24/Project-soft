@@ -34,9 +34,11 @@ public class RegisterPage {
 
 	    RestClient.registerPost(username, password, password_conf, email, phone);
 
-	    scanner.close();
+	    
 
 	    StartingScreen ss = new StartingScreen();
+	    
+	    scanner.close();
 	}
 
 	private String readPasswordFromConsole() 
