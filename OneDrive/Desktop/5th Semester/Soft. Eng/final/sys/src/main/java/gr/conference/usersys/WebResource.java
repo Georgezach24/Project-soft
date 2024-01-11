@@ -53,9 +53,19 @@ public class WebResource
 			@PathParam("p2") String name , @PathParam("p3") String surname ,
 			@PathParam("p4") String email,@PathParam("p5") String phone)
 	{
-		ResponseMessage msgMessage = new ResponseMessage();
+		ResponseMessage msg = new ResponseMessage();
+		if(UserDBHandler.updateUserInfo(username, username, name, surname, email, phone))
+		{
+			msg.setResponseCode("200");
+			msg.setResponseMessage("Your info has been updated succesfully");
+		}
+		else
+		{
+			msg.setResponseCode("-1");
+			msg.setResponseMessage("Error changing info");
+		}
 		
-		return "DEBUG IN PROGGRESS";
+		return new Gson().toJson(msg);
 	}
 	
 	@POST

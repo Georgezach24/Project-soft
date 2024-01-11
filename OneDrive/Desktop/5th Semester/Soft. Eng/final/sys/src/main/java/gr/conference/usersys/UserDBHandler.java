@@ -19,7 +19,7 @@ public class UserDBHandler{
 
 	
    public static EntityManagerFactory ENITY_MANAGER_FACTORY = Persistence.createEntityManagerFactory("sys");
-   public static int loginTries = 2; 
+   public static int loginTries = 3; 
    
    public static boolean isPasswordValid(String password) 
    {
@@ -33,32 +33,39 @@ public class UserDBHandler{
        return username.matches(usernamePattern);
    }
 
-  public static void registerAdmin()
-  {
-	  String usernameString = "admin";
-	  String passwdString = "admin";
-	  EntityManager em = ENITY_MANAGER_FACTORY.createEntityManager();
-	  EntityTransaction et = em.getTransaction();
-	  try {
-		et.begin();
-		User adminUser = new User();
-		
-		adminUser.setUsername(usernameString);
-		adminUser.setPassword(passwdString);
-		adminUser.setRole("ADMIN");
-		
-		em.persist(adminUser);
-		
-		et.commit();
-	  } catch (Exception e) {
-		  if (et != null && et.isActive()) 
-		  {
-			  et.rollback();
-	      }
-	  }finally {
-	        em.close();
-	    }
-  }
+   public static void registerAdmin() {
+       EntityManager em = ENITY_MANAGER_FACTORY.createEntityManager();
+       EntityTransaction et = em.getTransaction();
+
+       if (!isAdminRegistered(em)) {
+           try {
+               et.begin();
+               User adminUser = new User();
+               adminUser.setUsername("admin");
+               adminUser.setPassword("admin");
+               adminUser.setRole("ADMIN");
+               em.persist(adminUser);
+               et.commit();
+           } catch (Exception e) {
+               if (et != null && et.isActive()) {
+                   et.rollback();
+               }
+           } finally {
+               em.close();
+           }
+       } else {
+           System.out.println("Admin already registered!");
+       }
+   }
+
+   private static boolean isAdminRegistered(EntityManager em) {
+       String query = "SELECT COUNT(u) FROM User u WHERE u.username = :username AND u.role = :role";
+       TypedQuery<Long> countQuery = em.createQuery(query, Long.class);
+       countQuery.setParameter("username", "admin");
+       countQuery.setParameter("role", "ADMIN");
+       long adminCount = countQuery.getSingleResult();
+       return adminCount > 0;
+   }
   
    public static void registerUser(String username, String password, String password2, String email, String phone) {
    EntityManager em = ENITY_MANAGER_FACTORY.createEntityManager();
@@ -152,7 +159,7 @@ public class UserDBHandler{
        return false;
    }
    
-   public static void updateUserInfo(String username, String newUsername ,String newName, String newSurname, String newEmail, String newPhone) {
+   public static boolean updateUserInfo(String username, String newUsername ,String newName, String newSurname, String newEmail, String newPhone) {
 	    EntityManager em = ENITY_MANAGER_FACTORY.createEntityManager();
 	    EntityTransaction et = em.getTransaction();
 	    try {
@@ -162,6 +169,8 @@ public class UserDBHandler{
 	        TypedQuery<User> getUserQuery = em.createQuery(query, User.class);
 	        getUserQuery.setParameter("username", username);
 	        User userToUpdate = getUserQuery.getSingleResult();
+	        if (!username.isBlank() && isUsernameValid(newUsername)) 
+	        {
 	        	if(newUsername != null) {
 	        		userToUpdate.setUsername(newUsername);
 	        	}
@@ -177,9 +186,12 @@ public class UserDBHandler{
 	            if (newPhone != null) {
 	                userToUpdate.setPhone(newPhone);
 	            }
+	        }
 
 	            em.merge(userToUpdate);
 	            et.commit();
+	            
+	            return true;
 	        
 	    } catch (Exception e) {
 	        e.printStackTrace();
@@ -189,6 +201,8 @@ public class UserDBHandler{
 	    } finally {
 	        em.close();
 	    }
+	    
+	    return false;
 	}
 
 }

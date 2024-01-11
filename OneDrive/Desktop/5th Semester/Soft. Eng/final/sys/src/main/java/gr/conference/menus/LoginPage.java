@@ -28,11 +28,12 @@ public class LoginPage {
 	        String ret = RestClient.loginPost(username_local, password);
 	        if(ret.equals("{\"responseMessage\":\"Succes!\",\"responseCode\":\"200\"}"))
 	        {
+	        	username = username_local;
+	        	UserPage uPage = new UserPage(username);
 	        	break;
 	        }
 	    }
-		username = username_local;
-		UserPage uPage = new UserPage(username);
+		
 		scanner.close();
 	}	
 	
@@ -50,6 +51,7 @@ public class LoginPage {
 	        String ret = RestClient.AdminLoginPost(username_local, password);
 	        if(ret.equals("{\"responseMessage\":\"Succes!\",\"responseCode\":\"200\"}"))
 	        {
+	        	//IMPLEMENT ADMIN PAGE HERE TODO
 	        	break;
 	        }
 	    }

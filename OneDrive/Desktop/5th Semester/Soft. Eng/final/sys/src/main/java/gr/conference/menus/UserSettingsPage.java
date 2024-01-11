@@ -36,6 +36,7 @@ public class UserSettingsPage {
 					infoUpdate(username);
 					break;
 				case 2:
+					backOption(username);
 					break;
 				case 3:
 					break;
@@ -67,5 +68,10 @@ public class UserSettingsPage {
 		System.out.print("Write your new Phone: ");
 		String phoneString = scanner.nextLine();
 		String ret = RestClient.updatePost(username,usernameString, nameString, surnameString, emailString, phoneString);
+	}
+	
+	private void backOption(String usernameString)
+	{
+		UserPage uPage = new UserPage(usernameString);
 	}
 }
