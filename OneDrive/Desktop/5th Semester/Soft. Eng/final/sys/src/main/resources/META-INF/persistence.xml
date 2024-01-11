@@ -11,14 +11,14 @@ xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml
         <class>gr.conference.sys.User</class>
         <properties>
 
-            <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver" />
+            <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver" />
 
 
-            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost/authentication" />
+            <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost/authentication" />
 
-            <property name="javax.persistence.jdbc.user" value="root" />
+            <property name="jakarta.persistence.jdbc.user" value="root" />
 
-            <property name="javax.persistence.jdbc.password" value="" />
+            <property name="jakarta.persistence.jdbc.password" value="" />
         </properties>
     </persistence-unit>
 </persistence>

@@ -23,6 +23,14 @@ public class WebResource
 	}
 	
 	@GET
+	@Path("/passwordupdt")
+	@Produces("text/plain")
+	public String requestPasswordUpdate()
+	{	
+		return "Login is required!";
+	}
+	
+	@GET
 	@Path("/adminlogin")
 	@Produces("text/plain")
 	public String requestAdminLogin()
@@ -54,7 +62,7 @@ public class WebResource
 			@PathParam("p4") String email,@PathParam("p5") String phone)
 	{
 		ResponseMessage msg = new ResponseMessage();
-		if(UserDBHandler.updateUserInfo(username, username, name, surname, email, phone))
+		if(!UserDBHandler.updateUserInfo(username, username, name, surname, email, phone))
 		{
 			msg.setResponseCode("200");
 			msg.setResponseMessage("Your info has been updated succesfully");

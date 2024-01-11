@@ -58,7 +58,7 @@ public class UserDBHandler{
        }
    }
 
-   private static boolean isAdminRegistered(EntityManager em) {
+   public static boolean isAdminRegistered(EntityManager em) {
        String query = "SELECT COUNT(u) FROM User u WHERE u.username = :username AND u.role = :role";
        TypedQuery<Long> countQuery = em.createQuery(query, Long.class);
        countQuery.setParameter("username", "admin");

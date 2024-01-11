@@ -36,7 +36,8 @@ public class UserSettingsPage {
 					infoUpdate(username);
 					break;
 				case 2:
-					backOption(username);
+					flag = 1;
+					passwordUpdate(username);
 					break;
 				case 3:
 					break;
@@ -49,7 +50,10 @@ public class UserSettingsPage {
 					loadPage(username);
 					break;
 			}
+			
 		}
+		
+		UserPage up = new UserPage(username);
 	}
 	
 	private void infoUpdate(String username)
@@ -70,8 +74,12 @@ public class UserSettingsPage {
 		String ret = RestClient.updatePost(username,usernameString, nameString, surnameString, emailString, phoneString);
 	}
 	
-	private void backOption(String usernameString)
+	private void passwordUpdate(String username)
 	{
-		UserPage uPage = new UserPage(usernameString);
+		Scanner scanner = new Scanner(System.in);
+		
+		
+		
 	}
+
 }
