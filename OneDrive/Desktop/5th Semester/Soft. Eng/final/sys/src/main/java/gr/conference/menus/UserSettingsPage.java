@@ -33,13 +33,20 @@ public class UserSettingsPage {
 			{
 				case 1:
 					flag = 1;
-					infoUpdate(username);
+					String newUsername = infoUpdate(username);
+					if(!username.equals(newUsername))
+					{
+						username = newUsername;
+					}
 					break;
 				case 2:
 					flag = 1;
 					passwordUpdate(username);
 					break;
 				case 3:
+					flag = 1;
+					deleteAccount(username);
+					StartingScreen sc = new StartingScreen();
 					break;
 				case 4:
 					flag = 1;
@@ -56,7 +63,7 @@ public class UserSettingsPage {
 		UserPage up = new UserPage(username);
 	}
 	
-	private void infoUpdate(String username)
+	private String infoUpdate(String username)
 	{
 		Scanner scanner = new Scanner(System.in);
 		
@@ -71,6 +78,11 @@ public class UserSettingsPage {
 		String emailString = scanner.nextLine();
 		System.out.print("Write your new Phone: ");
 		String phoneString = scanner.nextLine();
+		
+		RestClient.updatePost(username, usernameString, nameString, surnameString, emailString, phoneString);
+		
+		return usernameString;
+		
 	}
 	
 	private void passwordUpdate(String username)
@@ -84,6 +96,24 @@ public class UserSettingsPage {
 		String newPassword = scanner.nextLine();
 		
 		RestClient.passwordUpdatePost(username , oldPassword, newPassword);
+	}
+	
+	private void deleteAccount(String username)
+	{
+		Scanner scanner = new Scanner(System.in);
+		
+		RestClient.deleteRequest();
+		
+		System.out.println("Are you sure you want to delete your account?(y/n)");
+		System.out.print(">");
+		String input = scanner.nextLine();
+		
+		if(input.equals("y") || input.equals("Y"))
+		{
+			RestClient.deletePost(username);
+		}
+		
+		
 	}
 
 }

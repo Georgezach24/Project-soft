@@ -154,6 +154,28 @@ public class RestClient {
        }
    }
    
+   public static void deleteRequest()
+   {
+	   HttpClient client = HttpClients.createDefault();
+       HttpGet request = new HttpGet("http://localhost:8080/system/webapi/usermng/delete");
+       request.addHeader("accept", "text/plain");
+
+       try {
+           HttpResponse response = client.execute(request);
+           BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+
+           String line;
+           StringBuilder result = new StringBuilder();
+           while ((line = reader.readLine()) != null) {
+               result.append(line);
+           }
+
+           System.out.println("GET Response:\n" + result.toString());
+       } catch (IOException e) {
+           e.printStackTrace();
+       }
+   }
+   
    public static String loginPost(String username , String password)
    {
 	   UserDBHandler.loginUser(username, password);
@@ -191,6 +213,35 @@ public class RestClient {
 	   HttpClient client = HttpClients.createDefault();
 	   StringBuilder result = new StringBuilder();
        HttpPost request = new HttpPost("http://localhost:8080/system/webapi/usermng/update/" + newusername + "/" + nameString + "/" + surname + "/" + email + "/" + phone);
+       request.addHeader("accept", "application/json");
+
+       try {
+    	   
+           HttpResponse response = client.execute(request);
+           BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+
+           String line;
+           
+           while ((line = reader.readLine()) != null) {
+               result.append(line);
+           }
+           
+           
+           System.out.println("POST Response:\n" + result.toString());
+       } catch (IOException e) {
+           e.printStackTrace();
+       }
+       
+       return result.toString();
+   }
+   
+   public static String deletePost(String username)
+   {
+	   UserDBHandler.deleteUser(username);
+		  
+	   HttpClient client = HttpClients.createDefault();
+	   StringBuilder result = new StringBuilder();
+       HttpPost request = new HttpPost("http://localhost:8080/system/webapi/usermng/delete/" + username);
        request.addHeader("accept", "application/json");
 
        try {

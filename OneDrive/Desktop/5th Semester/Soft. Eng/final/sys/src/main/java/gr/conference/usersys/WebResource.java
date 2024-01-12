@@ -39,6 +39,14 @@ public class WebResource
 	}
 	
 	@GET
+	@Path("/delete")
+	@Produces("text/plain")
+	public String requestDelete()
+	{	
+		return "Your account is goin to be deleted!";
+	}
+	
+	@GET
 	@Path("/register")
 	@Produces("text/plain")
 	public String requestRegister()
@@ -156,6 +164,26 @@ public class WebResource
 		}
 		
 		
+		return new Gson().toJson(msg);
+	}
+	
+	@DELETE
+	@Path("/delete/{p1}")
+	@Produces("application/json")
+	public String deleteUser(@PathParam("p1") String username)
+	{
+		ResponseMessage msg = new ResponseMessage();
+		if(UserDBHandler.deleteUser(username))
+		{
+			msg.setResponseCode("200");
+			msg.setResponseMessage("Account deleted succesfully");
+		}
+		else
+		{
+			msg.setResponseCode("-1");
+			msg.setResponseMessage("Error deleting account");
+		}
+
 		return new Gson().toJson(msg);
 	}
 
