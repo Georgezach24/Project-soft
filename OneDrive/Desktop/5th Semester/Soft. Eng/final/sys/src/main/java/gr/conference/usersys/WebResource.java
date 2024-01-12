@@ -23,11 +23,11 @@ public class WebResource
 	}
 	
 	@GET
-	@Path("/passwordupdt")
+	@Path("/passwordupdate")
 	@Produces("text/plain")
 	public String requestPasswordUpdate()
 	{	
-		return "Login is required!";
+		return "Provide your changes!";
 	}
 	
 	@GET
@@ -63,6 +63,27 @@ public class WebResource
 	{
 		ResponseMessage msg = new ResponseMessage();
 		if(!UserDBHandler.updateUserInfo(username, username, name, surname, email, phone))
+		{
+			msg.setResponseCode("200");
+			msg.setResponseMessage("Your info has been updated succesfully");
+		}
+		else
+		{
+			msg.setResponseCode("-1");
+			msg.setResponseMessage("Error changing info");
+		}
+		
+		return new Gson().toJson(msg);
+	}
+	
+	@POST
+	@Path("/passwordupdate/{p1}/{p2}/{p3}")
+	@Produces("application/json")
+	public String passwordUpdate(@PathParam("p1") String username , 
+		   @PathParam("p2") String oldPassword , @PathParam("p3") String newPassword)
+	{
+		ResponseMessage msg = new ResponseMessage();
+		if(!UserDBHandler.updatePassword(username, oldPassword, newPassword))
 		{
 			msg.setResponseCode("200");
 			msg.setResponseMessage("Your info has been updated succesfully");

@@ -133,6 +133,41 @@ public class UserDBHandler{
        return false;
    }
    
+   public static boolean updatePassword(String username, String oldPassword ,String newPassword) {
+	    EntityManager em = ENITY_MANAGER_FACTORY.createEntityManager();
+	    EntityTransaction et = em.getTransaction();
+	    try {
+	        et.begin();
+
+	        String query = "SELECT u FROM User u WHERE u.username = :username AND password = :password";
+	        TypedQuery<User> getUserQuery = em.createQuery(query, User.class);
+	        getUserQuery.setParameter("username", username);
+	        getUserQuery.setParameter("password", oldPassword);
+	        User userToUpdate = getUserQuery.getSingleResult();
+	        if (!newPassword.isBlank() && isPasswordValid(newPassword)) 
+	        {
+	        	if(newPassword != null) {
+	        		userToUpdate.setUsername(newPassword);
+	        	}
+	        }
+	        
+	            em.merge(userToUpdate);
+	            et.commit();
+	            
+	            return true;
+	        
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        if (et.isActive()) {
+	            et.rollback();
+	        }
+	    } finally {
+	        em.close();
+	    }
+	    
+	    return false;
+	}
+   
    public static boolean loginAdmin(String username , String password)
    {
        EntityManager em = ENITY_MANAGER_FACTORY.createEntityManager();

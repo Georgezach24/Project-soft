@@ -71,15 +71,19 @@ public class UserSettingsPage {
 		String emailString = scanner.nextLine();
 		System.out.print("Write your new Phone: ");
 		String phoneString = scanner.nextLine();
-		String ret = RestClient.updatePost(username,usernameString, nameString, surnameString, emailString, phoneString);
 	}
 	
 	private void passwordUpdate(String username)
 	{
 		Scanner scanner = new Scanner(System.in);
 		
+		RestClient.passwordUpdateRequest();
+		System.out.print("Write your old password: ");
+		String oldPassword = scanner.nextLine();
+		System.out.print("Write your new password: ");
+		String newPassword = scanner.nextLine();
 		
-		
+		RestClient.passwordUpdatePost(username , oldPassword, newPassword);
 	}
 
 }
