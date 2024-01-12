@@ -8,7 +8,8 @@ xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml
 
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
-        <class>gr.conference.sys.User</class>
+        <class>gr.conference.usersys.User</class>
+        <class>gr.conference.confsys.Conference</class>
         <properties>
 
             <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver" />
