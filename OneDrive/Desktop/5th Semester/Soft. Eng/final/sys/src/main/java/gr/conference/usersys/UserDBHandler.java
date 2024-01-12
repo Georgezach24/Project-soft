@@ -109,11 +109,13 @@ public class UserDBHandler{
    {
        EntityManager em = ENITY_MANAGER_FACTORY.createEntityManager();
        String role = "USER";
-       String query = "SELECT u FROM User u WHERE u.username =:username AND u.password =:password AND u.role =:role";
+       String role2 = "PC CHAIR";
+       String query = "SELECT u FROM User u WHERE u.username =:username AND u.password =:password AND u.role =:role OR u.role =:role2";
        TypedQuery<User> tq = em.createQuery(query, User.class);
        tq.setParameter("username", username);
        tq.setParameter("password", password);
        tq.setParameter("role", role);
+       tq.setParameter("role2", role2);
        User logedUser = null;
        try{
     	   logedUser = tq.getSingleResult();

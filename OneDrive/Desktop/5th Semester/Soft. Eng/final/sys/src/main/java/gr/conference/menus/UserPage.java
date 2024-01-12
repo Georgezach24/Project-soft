@@ -31,7 +31,10 @@ public class UserPage {
 				flag = 1;
 				UserSettingsPage userSettingsPage = new UserSettingsPage(uString);
 				break;
-			
+			case 2:
+				flag = 1;
+				ConferenceCreatePage ccp = new ConferenceCreatePage(uString);
+				break;
 			default:
 				flag = 1;
 				loadPage(uString);

@@ -20,6 +20,9 @@ public class Conference {
 	@Column(name ="conf_id", nullable = false, unique = true)
 	private float id;
 	
+	@Column(name="creator_id", nullable = false)
+	private float id_creator;
+	
 	@Column(name="conf_name", nullable = false)
 	private String name;
 	
@@ -61,6 +64,15 @@ public class Conference {
 	public void setDesc(String desc) {
 		this.desc = desc;
 	}
+
+	public float getId_creator() {
+		return id_creator;
+	}
+
+	public void setId_creator(float id_creator) {
+		this.id_creator = id_creator;
+	}
+	
 	
 	
 }
