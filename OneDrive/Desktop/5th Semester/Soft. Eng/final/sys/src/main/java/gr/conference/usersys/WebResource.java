@@ -62,6 +62,14 @@ public class WebResource
 		return "Fill the information correctlly in order to update";
 	}
 	
+	@GET
+	@Path("/updatestatus")
+	@Produces("text/plain")
+	public String requestStatusUpdate()
+	{	
+		return "Update the status!";
+	}
+	
 	@POST
 	@Path("/update/{p1}/{p2}/{p3}/{p4}/{p5}")
 	@Produces("application/json")
@@ -153,6 +161,27 @@ public class WebResource
 	{
 		ResponseMessage msg = new ResponseMessage();
 		if(UserDBHandler.loginUser(username, password))
+		{
+			msg.setResponseCode("200");
+			msg.setResponseMessage("Succes registering user");
+		}
+		else
+		{
+			msg.setResponseCode("-1");
+			msg.setResponseMessage("Error registering user");
+		}
+		
+		
+		return new Gson().toJson(msg);
+	}
+	
+	@POST
+	@Path("/updatestatus/{p1}/{p2}")
+	@Produces("application/json")
+	public String statusUpdate(@PathParam("p1") String username, @PathParam("p2") String status)
+	{
+		ResponseMessage msg = new ResponseMessage();
+		if(!UserDBHandler.updateStatus(username, status))
 		{
 			msg.setResponseCode("200");
 			msg.setResponseMessage("Succes registering user");

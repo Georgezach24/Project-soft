@@ -3,17 +3,14 @@ package gr.conference.menus;
 import java.util.Scanner;
 
 import gr.conference.usersys.RestClient;
-import javassist.expr.NewArray;
 
-
-public class UserSettingsPage {
-	
-	public UserSettingsPage(String usernameString)
+public class AdminSettingsPage {
+	public AdminSettingsPage()
 	{
-		loadPage(usernameString);
+		loadPage();
 	}
 	
-	private void loadPage(String username)
+	private void loadPage()
 	{
 		int flag = 0;
 		Scanner scanner = new Scanner(System.in);
@@ -22,7 +19,8 @@ public class UserSettingsPage {
 		System.out.println("1. Information update");
 		System.out.println("2. Password update");
 		System.out.println("3. Delete Account");
-		System.out.println("4. Back");
+		System.out.println("4. Account status update");
+		System.out.println("5. Back");
 		System.out.print(">");
 		int input = scanner.nextInt();
 		System.out.println("-----------------------------");
@@ -33,50 +31,52 @@ public class UserSettingsPage {
 			{
 				case 1:
 					flag = 1;
-					String newUsername = infoUpdate(username);
-					if(!username.equals(newUsername))
-					{
-						username = newUsername;
-					}
+					infoUpdate();
 					break;
 				case 2:
 					flag = 1;
-					passwordUpdate(username);
+					passwordUpdate();
 					break;
 				case 3:
 					flag = 1;
-					deleteAccount(username);
+					deleteAccount();
 					StartingScreen sc = new StartingScreen();
 					break;
 				case 4:
 					flag = 1;
-					UserPage uPage = new UserPage(username);
+					statusUpdate();
+					break;
+				case 5:
+					flag = 1;
+					AdminPage ap = new AdminPage();
 					break;
 				default:
 					flag = 1;
-					loadPage(username);
+					loadPage();
 					break;
 			}
 			
 		}
 		
-		UserPage up = new UserPage(username);
+		AdminPage ap = new AdminPage();
 	}
 	
-	private String infoUpdate(String username)
+	private String infoUpdate()
 	{
 		Scanner scanner = new Scanner(System.in);
 		
 		RestClient.updateRequest();
-		System.out.print("Write your new username: ");
+		System.out.print("Write the current username: ");
+		String username = scanner.nextLine();
+		System.out.print("Write the new username: ");
 		String usernameString = scanner.nextLine();
-		System.out.print("Write your new Name: ");
+		System.out.print("Write the new Name: ");
 		String nameString = scanner.nextLine();
-		System.out.print("Write your new Surname: ");
+		System.out.print("Write the new Surname: ");
 		String surnameString = scanner.nextLine();
-		System.out.print("Write your new Email: ");
+		System.out.print("Write the new Email: ");
 		String emailString = scanner.nextLine();
-		System.out.print("Write your new Phone: ");
+		System.out.print("Write the new Phone: ");
 		String phoneString = scanner.nextLine();
 		
 		RestClient.updatePost(username, usernameString, nameString, surnameString, emailString, phoneString);
@@ -85,26 +85,29 @@ public class UserSettingsPage {
 		
 	}
 	
-	private void passwordUpdate(String username)
+	private void passwordUpdate()
 	{
 		Scanner scanner = new Scanner(System.in);
 		
 		RestClient.passwordUpdateRequest();
-		System.out.print("Write your old password: ");
+		System.out.print("Write the username: ");
+		String username = scanner.nextLine();
+		System.out.print("Write the old password: ");
 		String oldPassword = scanner.nextLine();
-		System.out.print("Write your new password: ");
+		System.out.print("Write the new password: ");
 		String newPassword = scanner.nextLine();
 		
 		RestClient.passwordUpdatePost(username , oldPassword, newPassword);
 	}
 	
-	private void deleteAccount(String username)
+	private void deleteAccount()
 	{
 		Scanner scanner = new Scanner(System.in);
 		
 		RestClient.deleteRequest();
-		
-		System.out.println("Are you sure you want to delete your account?(y/n)");
+		System.out.print("Write the username: ");
+		String username = scanner.nextLine();
+		System.out.println("Are you sure you want to delete this account?(y/n)");
 		System.out.print(">");
 		String input = scanner.nextLine();
 		
@@ -113,5 +116,16 @@ public class UserSettingsPage {
 			RestClient.deletePost(username);
 		}
 	}
-
+	
+	private void statusUpdate()
+	{
+		Scanner scanner = new Scanner(System.in);
+		RestClient.updateStatusRequest();
+		System.out.print("Write the username: ");
+		String username = scanner.nextLine();
+		System.out.print("Write the status(ACTIVE/INACTIVE): ");
+		String status = scanner.nextLine();
+		RestClient.updateStatusPost(username, status);
+	}
 }
+

@@ -5,14 +5,12 @@ package gr.conference.usersys;
 * @author Giorgos Zachos
 */
 
-//import java.util.List;
+
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Persistence;
 import jakarta.persistence.TypedQuery;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 
 
 public class UserDBHandler{
@@ -267,5 +265,40 @@ public class UserDBHandler{
 
        return false;
    }
+   
+   public static boolean updateStatus(String username , String status) {
+	    EntityManager em = ENITY_MANAGER_FACTORY.createEntityManager();
+	    EntityTransaction et = em.getTransaction();
+	    try {
+	        et.begin();
+
+	        String query = "SELECT u FROM User u WHERE u.username = :username";
+	        TypedQuery<User> getUserQuery = em.createQuery(query, User.class);
+	        getUserQuery.setParameter("username", username);
+	        User userToUpdate = getUserQuery.getSingleResult();
+	        if (!username.isBlank()) 
+	        {
+	        	if(!status.isBlank())
+	        	{
+	        		userToUpdate.setEmail(status);
+	        	}
+	        }
+
+	            em.merge(userToUpdate);
+	            et.commit();
+	            
+	            return true;
+	        
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        if (et.isActive()) {
+	            et.rollback();
+	        }
+	    } finally {
+	        em.close();
+	    }
+	    
+	    return false;
+	}
 
 }
