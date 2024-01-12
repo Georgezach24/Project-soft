@@ -40,7 +40,6 @@ public class AdminSettingsPage {
 				case 3:
 					flag = 1;
 					deleteAccount();
-					StartingScreen sc = new StartingScreen();
 					break;
 				case 4:
 					flag = 1;

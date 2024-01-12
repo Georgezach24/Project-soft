@@ -181,15 +181,15 @@ public class WebResource
 	public String statusUpdate(@PathParam("p1") String username, @PathParam("p2") String status)
 	{
 		ResponseMessage msg = new ResponseMessage();
-		if(!UserDBHandler.updateStatus(username, status))
+		if(UserDBHandler.updateStatus(username, status))
 		{
 			msg.setResponseCode("200");
-			msg.setResponseMessage("Succes registering user");
+			msg.setResponseMessage("Succes updating status");
 		}
 		else
 		{
 			msg.setResponseCode("-1");
-			msg.setResponseMessage("Error registering user");
+			msg.setResponseMessage("Error updating status");
 		}
 		
 		

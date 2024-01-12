@@ -276,13 +276,8 @@ public class UserDBHandler{
 	        TypedQuery<User> getUserQuery = em.createQuery(query, User.class);
 	        getUserQuery.setParameter("username", username);
 	        User userToUpdate = getUserQuery.getSingleResult();
-	        if (!username.isBlank()) 
-	        {
-	        	if(!status.isBlank())
-	        	{
-	        		userToUpdate.setEmail(status);
-	        	}
-	        }
+	        userToUpdate.setUser_status(status);
+	        	
 
 	            em.merge(userToUpdate);
 	            et.commit();
