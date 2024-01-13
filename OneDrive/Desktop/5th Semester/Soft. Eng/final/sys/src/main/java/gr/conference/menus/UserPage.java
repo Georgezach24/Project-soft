@@ -20,7 +20,8 @@ public class UserPage {
 		System.out.println("--------------------");
 		System.out.println("1. User settings");
 		System.out.println("2. Create new conference");
-		System.out.println("3. ");
+		System.out.println("3. Conference search");
+		System.out.println("4. ");
 		System.out.print(">");
 		int input = scanner.nextInt();
 		
@@ -34,6 +35,9 @@ public class UserPage {
 			case 2:
 				flag = 1;
 				ConferenceCreatePage ccp = new ConferenceCreatePage(uString);
+				break;
+			case 3:
+				flag = 1;
 				break;
 			default:
 				flag = 1;

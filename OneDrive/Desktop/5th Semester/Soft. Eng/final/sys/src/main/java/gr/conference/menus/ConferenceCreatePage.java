@@ -18,7 +18,14 @@ public class ConferenceCreatePage {
 		System.out.print("Insert the conference description: ");
 		String desc = scanner.nextLine();
 		
-		RestClient.confCreatePost(name, username, desc);
-		UserPage up = new UserPage(username);
+		String output= RestClient.confCreatePost(name, username, desc);
+		
+		if(output.equals("{\\\"responseMessage\\\":\\\"Conference created successfully\\\",\\\"responseCode\\\":\\\"200\\\"}"))
+		{
+			//TODO: IMPLEMENT CONFERENCE PAGE HERE
+		}
+		else {
+			UserPage up = new UserPage(username);
+		}
 	}
 }

@@ -35,7 +35,7 @@ public class RestClient {
 	       }
 	}
 	
-	public static void confCreatePost(String name , String user , String desc) {
+	public static String confCreatePost(String name , String user , String desc) {
 		   ConferenceDBHandler.createConference(name, user, desc);
 		  
 		   HttpClient client = HttpClients.createDefault();
@@ -56,8 +56,11 @@ public class RestClient {
 	           
 	           
 	           System.out.println("POST Response:\n" + result.toString());
+	           return result.toString();
 	       } catch (IOException e) {
 	           e.printStackTrace();
 	       }
+	       
+	       return null;
 	   }
 }
