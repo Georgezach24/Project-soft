@@ -1,4 +1,4 @@
-package Testcases;
+package gr.conference.usersys.test;
 
 import org.junit.jupiter.api.Test;
 

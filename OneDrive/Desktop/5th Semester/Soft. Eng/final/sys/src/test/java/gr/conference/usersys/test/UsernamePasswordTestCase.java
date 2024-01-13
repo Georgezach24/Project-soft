@@ -1,4 +1,4 @@
-package Testcases;
+package gr.conference.usersys.test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
