@@ -38,6 +38,7 @@ public class UserPage {
 				break;
 			case 3:
 				flag = 1;
+				ConferenceSearchPage csp = new ConferenceSearchPage(uString);
 				break;
 			default:
 				flag = 1;

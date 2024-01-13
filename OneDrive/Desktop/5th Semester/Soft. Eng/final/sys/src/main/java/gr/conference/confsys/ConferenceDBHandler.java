@@ -1,12 +1,14 @@
 package gr.conference.confsys;
 
 import java.util.Date;
+import java.util.List;
 
 import gr.conference.usersys.User;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Persistence;
+import jakarta.persistence.TypedQuery;
 
 
 public class ConferenceDBHandler {
@@ -58,7 +60,38 @@ public class ConferenceDBHandler {
 
 	    return false;
 	}
+	
+	public static List<Conference> searchConferences(String conferenceName, String description) {
+        EntityManager em = ENITY_MANAGER_FACTORY.createEntityManager();
 
+        try {
+            StringBuilder jpqlBuilder = new StringBuilder("SELECT c FROM Conference c WHERE 1=1");
+
+            if (conferenceName != null && !conferenceName.isBlank()) {
+                jpqlBuilder.append(" AND LOWER(c.name) LIKE :conferenceName");
+            }
+
+            if (description != null && !description.isBlank()) {
+                jpqlBuilder.append(" AND LOWER(c.desc) LIKE :description");
+            }
+
+            jpqlBuilder.append(" ORDER BY c.name");
+
+            TypedQuery<Conference> query = em.createQuery(jpqlBuilder.toString(), Conference.class);
+
+            if (conferenceName != null && !conferenceName.isBlank()) {
+                query.setParameter("conferenceName", "%" + conferenceName.toLowerCase() + "%");
+            }
+
+            if (description != null && !description.isBlank()) {
+                query.setParameter("description", "%" + description.toLowerCase() + "%");
+            }
+
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
+    }
 
     private static boolean isConferenceNameUnique(EntityManager em, String conferenceName) {
         String query = "SELECT COUNT(c) FROM Conference c WHERE c.name = :name";

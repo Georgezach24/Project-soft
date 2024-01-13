@@ -20,6 +20,13 @@ public class WebResource {
 		return "Create new conference!";
 	}
 	
+	@GET
+	@Path("/search")
+	@Produces("text/plain")
+	public String requestSearch()
+	{
+		return "Search a conference!";
+	}
 	
 	@POST
 	@Path("/create/{p1}/{p2}/{p3}")
@@ -37,6 +44,26 @@ public class WebResource {
 		{
 			msg.setResponseCode("-1");
 			msg.setResponseMessage("Error creating conference");
+		}
+		
+		return new Gson().toJson(msg);
+	}
+	
+	@POST
+	@Path("/search/{p1}")
+	@Produces("application/json")
+	public String search(@PathParam("p1") String name , String desc)
+	{
+		ResponseMessage msg = new ResponseMessage();
+		if(!ConferenceDBHandler.searchConferences(name, desc).isEmpty())
+		{
+			msg.setResponseCode("200");
+			msg.setResponseMessage("Conference search was successfull");
+		}
+		else
+		{
+			msg.setResponseCode("-1");
+			msg.setResponseMessage("Error in searching conference");
 		}
 		
 		return new Gson().toJson(msg);

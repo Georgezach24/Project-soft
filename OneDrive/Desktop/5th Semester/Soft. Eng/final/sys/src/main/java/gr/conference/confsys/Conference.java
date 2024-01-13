@@ -72,6 +72,11 @@ public class Conference {
 	public void setId_creator(float id_creator) {
 		this.id_creator = id_creator;
 	}
+
+	@Override
+	public String toString() {
+		return "Conference: name=" + name + ", date=" + date + ", desc=" + desc + ".";
+	}
 	
 	
 	
