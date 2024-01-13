@@ -20,9 +20,9 @@ public class ConferenceCreatePage {
 		
 		String output= RestClient.confCreatePost(name, username, desc);
 		
-		if(output.equals("{\\\"responseMessage\\\":\\\"Conference created successfully\\\",\\\"responseCode\\\":\\\"200\\\"}"))
+		if(output.equals("{\"responseMessage\":\"Conference created successfully\",\"responseCode\":\"200\"}"))
 		{
-			//TODO: IMPLEMENT CONFERENCE PAGE HERE
+			ConferencePage cp = new ConferencePage(username,name);
 		}
 		else {
 			UserPage up = new UserPage(username);

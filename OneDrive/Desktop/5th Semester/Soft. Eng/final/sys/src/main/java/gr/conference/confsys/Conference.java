@@ -32,6 +32,7 @@ public class Conference {
 	
 	@Column(name = "conf_desc")
 	private String desc;
+	
 
 	public float getId() {
 		return id;
