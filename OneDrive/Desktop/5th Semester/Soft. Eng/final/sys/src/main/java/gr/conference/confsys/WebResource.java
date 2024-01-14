@@ -83,7 +83,7 @@ public class WebResource {
 	public String update(@PathParam("p1") String oldName , @PathParam("p2")String newnName , @PathParam("p3")String desc)
 	{
 		ResponseMessage msg = new ResponseMessage();
-		if(!ConferenceDBHandler.updateConference(oldName, newnName, desc))
+		if(!ConferenceDBHandler.updateConference(newnName, newnName, desc))
 		{
 			msg.setResponseCode("200");
 			msg.setResponseMessage("Conference update was successfull");

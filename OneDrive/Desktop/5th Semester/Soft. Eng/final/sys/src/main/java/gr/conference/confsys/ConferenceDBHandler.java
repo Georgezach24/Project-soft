@@ -133,16 +133,22 @@ public class ConferenceDBHandler {
 	}
 		
 	private static Conference getConferenceByName(EntityManager em, String conferenceName) {
-		String query = "SELECT c FROM Conference c WHERE c.name = :name";
-		TypedQuery<Conference> conferenceQuery = em.createQuery(query, Conference.class);
-		conferenceQuery.setParameter("name", conferenceName);
-		
-		try {
-			return conferenceQuery.getSingleResult();
-		} catch (NoResultException e) {
-			return null;
-		}
+	    System.out.println("Searching for conference with name: " + conferenceName);
+
+	    String query = "SELECT c FROM Conference c WHERE c.name = :name";
+	    TypedQuery<Conference> conferenceQuery = em.createQuery(query, Conference.class);
+	    conferenceQuery.setParameter("name", conferenceName);
+
+	    try {
+	        Conference result = conferenceQuery.getSingleResult();
+	        System.out.println("Conference found: " + result);
+	        return result;
+	    } catch (NoResultException e) {
+	        System.out.println("No conference found with name: " + conferenceName);
+	        return null;
+	    }
 	}
+
 
     private static boolean isConferenceNameUnique(EntityManager em, String conferenceName) {
         String query = "SELECT COUNT(c) FROM Conference c WHERE c.name = :name";
