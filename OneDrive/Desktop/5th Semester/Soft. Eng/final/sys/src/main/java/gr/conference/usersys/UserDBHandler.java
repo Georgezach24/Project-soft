@@ -9,6 +9,7 @@ package gr.conference.usersys;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.Persistence;
 import jakarta.persistence.TypedQuery;
 
@@ -16,7 +17,7 @@ import jakarta.persistence.TypedQuery;
 public class UserDBHandler{
 
 	
-   public static EntityManagerFactory ENITY_MANAGER_FACTORY = Persistence.createEntityManagerFactory("sys");
+   public static EntityManagerFactory ENTITY_MANAGER_FACTORY = Persistence.createEntityManagerFactory("sys");
    public static int loginTries = 3; 
    
    public static boolean isPasswordValid(String password) 
@@ -32,7 +33,7 @@ public class UserDBHandler{
    }
 
    public static void registerAdmin() {
-       EntityManager em = ENITY_MANAGER_FACTORY.createEntityManager();
+       EntityManager em = ENTITY_MANAGER_FACTORY.createEntityManager();
        EntityTransaction et = em.getTransaction();
 
        if (!isAdminRegistered(em)) {
@@ -66,7 +67,7 @@ public class UserDBHandler{
    }
   
    public static void registerUser(String username, String password, String password2, String email, String phone) {
-   EntityManager em = ENITY_MANAGER_FACTORY.createEntityManager();
+   EntityManager em = ENTITY_MANAGER_FACTORY.createEntityManager();
    EntityTransaction et = em.getTransaction();
    try {
        et.begin();
@@ -107,7 +108,7 @@ public class UserDBHandler{
 
    public static boolean loginUser(String username , String password)
    {
-       EntityManager em = ENITY_MANAGER_FACTORY.createEntityManager();
+       EntityManager em = ENTITY_MANAGER_FACTORY.createEntityManager();
        String role = "USER";
        String role2 = "PC CHAIR";
        String query = "SELECT u FROM User u WHERE u.username =:username AND u.password =:password AND u.role =:role OR u.role =:role2";
@@ -133,29 +134,35 @@ public class UserDBHandler{
        return false;
    }
    
-   public static boolean updatePassword(String username, String oldPassword ,String newPassword) {
-	    EntityManager em = ENITY_MANAGER_FACTORY.createEntityManager();
+   public static boolean updatePassword(String username, String oldPassword, String newPassword) {
+	    EntityManager em = ENTITY_MANAGER_FACTORY.createEntityManager();
 	    EntityTransaction et = em.getTransaction();
+
 	    try {
 	        et.begin();
 
-	        String query = "SELECT u FROM User u WHERE u.username = :username AND password = :password";
+	        String query = "SELECT u FROM User u WHERE u.username = :username AND u.password = :password";
 	        TypedQuery<User> getUserQuery = em.createQuery(query, User.class);
 	        getUserQuery.setParameter("username", username);
 	        getUserQuery.setParameter("password", oldPassword);
+
 	        User userToUpdate = getUserQuery.getSingleResult();
-	        if (!newPassword.isBlank() && isPasswordValid(newPassword)) 
-	        {
-	        	if(newPassword != null) {
-	        		userToUpdate.setPassword(newPassword);;
-	        	}
-	        }
-	        
+
+	        if (newPassword != null && isPasswordValid(newPassword)) {
+	            userToUpdate.setPassword(newPassword);
 	            em.merge(userToUpdate);
 	            et.commit();
-	            
 	            return true;
-	        
+	        } else {
+	            // Handle the case where the new password is invalid or null
+	            et.rollback();
+	            return false;
+	        }
+
+	    } catch (NoResultException e) {
+	        // Handle the case where no user is found with the given username and old password
+	        et.rollback();
+	        return false;
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	        if (et.isActive()) {
@@ -164,13 +171,14 @@ public class UserDBHandler{
 	    } finally {
 	        em.close();
 	    }
-	    
+
 	    return false;
 	}
+
    
    public static boolean loginAdmin(String username , String password)
    {
-       EntityManager em = ENITY_MANAGER_FACTORY.createEntityManager();
+       EntityManager em = ENTITY_MANAGER_FACTORY.createEntityManager();
        String role = "ADMIN";
        String query = "SELECT u FROM User u WHERE u.username =:username AND u.password =:password AND u.role =:role";
        TypedQuery<User> tq = em.createQuery(query, User.class);
@@ -195,7 +203,7 @@ public class UserDBHandler{
    }
    
    public static boolean updateUserInfo(String username, String newUsername ,String newName, String newSurname, String newEmail, String newPhone) {
-	    EntityManager em = ENITY_MANAGER_FACTORY.createEntityManager();
+	    EntityManager em = ENTITY_MANAGER_FACTORY.createEntityManager();
 	    EntityTransaction et = em.getTransaction();
 	    try {
 	        et.begin();
@@ -241,7 +249,7 @@ public class UserDBHandler{
 	}
    
    public static boolean deleteUser(String username) {
-       EntityManager em = ENITY_MANAGER_FACTORY.createEntityManager();
+       EntityManager em = ENTITY_MANAGER_FACTORY.createEntityManager();
        EntityTransaction et = em.getTransaction();
 
        try {
@@ -269,7 +277,7 @@ public class UserDBHandler{
    }
    
    public static boolean updateStatus(String username , String status) {
-	    EntityManager em = ENITY_MANAGER_FACTORY.createEntityManager();
+	    EntityManager em = ENTITY_MANAGER_FACTORY.createEntityManager();
 	    EntityTransaction et = em.getTransaction();
 	    try {
 	        et.begin();

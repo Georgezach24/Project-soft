@@ -2,67 +2,67 @@ package gr.conference.confsys;
 
 import java.util.Date;
 import java.util.List;
-
-import gr.conference.usersys.User;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Persistence;
 import jakarta.persistence.TypedQuery;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import gr.conference.usersys.User;
 
 public class ConferenceDBHandler {
-	
-	public static EntityManagerFactory ENITY_MANAGER_FACTORY = Persistence.createEntityManagerFactory("sys");
-	
-	public static boolean createConference(String conferenceName, String creatorUsername, String desc) {
-	    EntityManager em = ENITY_MANAGER_FACTORY.createEntityManager();
-	    EntityTransaction et = em.getTransaction();
 
-	    try {
-	        et.begin();
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConferenceDBHandler.class);
+    public static EntityManagerFactory ENTITY_MANAGER_FACTORY = Persistence.createEntityManagerFactory("sys");
 
-	        if (isConferenceNameUnique(em, conferenceName)) {
-	     
-	            User creator = em.createQuery("SELECT u FROM User u WHERE u.username = :username", User.class)
-	                    .setParameter("username", creatorUsername)
-	                    .getSingleResult();
+    public static boolean createConference(String conferenceName, String creatorUsername, String desc) {
+        EntityManager em = ENTITY_MANAGER_FACTORY.createEntityManager();
+        EntityTransaction et = em.getTransaction();
 
-	            if (creator != null) {
+        try {
+            et.begin();
 
-	                creator.setRole("PC CHAIR");
+            if (isConferenceNameUnique(em, conferenceName)) {
 
+                User creator = em.createQuery("SELECT u FROM User u WHERE u.username = :username", User.class)
+                        .setParameter("username", creatorUsername)
+                        .getSingleResult();
 
-	                Conference newConference = new Conference();
-	                newConference.setName(conferenceName);
-	                newConference.setDesc(desc);
-	                newConference.setDate(new Date());
-	                newConference.setId_creator(creator.getUserId());
+                if (creator != null) {
+                    creator.setRole("PC CHAIR");
 
-	                em.persist(newConference);
+                    Conference newConference = new Conference();
+                    newConference.setName(conferenceName);
+                    newConference.setDesc(desc);
+                    newConference.setDate(new Date());
+                    newConference.setId_creator(creator.getUserId());
 
-	                et.commit();
-	                return true;
-	            } else {
-	                System.out.println("Creator not found!");
-	            }
-	        } else {
-	            System.out.println("Conference name is not unique!");
-	        }
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        if (et.isActive()) {
-	            et.rollback();
-	        }
-	    } finally {
-	        em.close();
-	    }
+                    em.persist(newConference);
 
-	    return false;
-	}
-	
-	public static List<Conference> searchConferences(String conferenceName, String description) {
-        EntityManager em = ENITY_MANAGER_FACTORY.createEntityManager();
+                    et.commit();
+                    return true;
+                } else {
+                    LOGGER.error("Creator not found!");
+                }
+            } else {
+                LOGGER.error("Conference name is not unique!");
+            }
+        } catch (Exception e) {
+            LOGGER.error("Exception occurred during createConference", e);
+            if (et.isActive()) {
+                et.rollback();
+            }
+        } finally {
+            em.close();
+        }
+
+        return false;
+    }
+
+    public static List<Conference> searchConferences(String conferenceName, String description) {
+        EntityManager em = ENTITY_MANAGER_FACTORY.createEntityManager();
 
         try {
             StringBuilder jpqlBuilder = new StringBuilder("SELECT c FROM Conference c WHERE 1=1");

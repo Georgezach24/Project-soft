@@ -18,7 +18,7 @@ class LoginUserTestcase {
     public void setUp() {
         // Use an in-memory database for testing
         entityManager = Persistence.createEntityManagerFactory("sys").createEntityManager();
-        UserDBHandler.ENITY_MANAGER_FACTORY = Persistence.createEntityManagerFactory("sys");
+        UserDBHandler.ENTITY_MANAGER_FACTORY = Persistence.createEntityManagerFactory("sys");
         entityManager.getTransaction().begin();
         UserDBHandler.registerAdmin(); // Ensure admin is registered
         UserDBHandler.registerUser("User02", "User02@!", "User02@!", "test@example.com", "123456789");
