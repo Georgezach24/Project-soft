@@ -28,6 +28,14 @@ public class WebResource {
 		return "Search a conference!";
 	}
 	
+	@GET
+	@Path("/update")
+	@Produces("text/plain")
+	public String requestUpdate()
+	{
+		return "Update a conference!";
+	}
+	
 	@POST
 	@Path("/create/{p1}/{p2}/{p3}")
 	@Produces("application/json")
@@ -64,6 +72,26 @@ public class WebResource {
 		{
 			msg.setResponseCode("-1");
 			msg.setResponseMessage("Error in searching conference");
+		}
+		
+		return new Gson().toJson(msg);
+	}
+	
+	@POST
+	@Path("/update/{p1}/{p2}/{p3}")
+	@Produces("application/json")
+	public String update(@PathParam("p1") String oldName , @PathParam("p2")String newnName , @PathParam("p3")String desc)
+	{
+		ResponseMessage msg = new ResponseMessage();
+		if(!ConferenceDBHandler.updateConference(oldName, newnName, desc))
+		{
+			msg.setResponseCode("200");
+			msg.setResponseMessage("Conference update was successfull");
+		}
+		else
+		{
+			msg.setResponseCode("-1");
+			msg.setResponseMessage("Error in updating conference");
 		}
 		
 		return new Gson().toJson(msg);
