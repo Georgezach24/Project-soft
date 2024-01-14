@@ -96,7 +96,7 @@ public class ConferenceDBHandler {
 	
 	public static boolean updateConference(String oldConferenceName, String newName, String newDescription) 
 	{
-		EntityManager em = ENITY_MANAGER_FACTORY.createEntityManager();
+		EntityManager em = ENTITY_MANAGER_FACTORY.createEntityManager();
 		EntityTransaction et = em.getTransaction();
 		
 		try {

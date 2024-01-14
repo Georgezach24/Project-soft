@@ -1,25 +1,25 @@
 package gr.conference.confsys.test;
 
-import static org.junit.Assert.*;
-
+import static org.junit.jupiter.api.Assertions.*;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import gr.conference.confsys.ConferenceDBHandler;
 
 public class CreateConferenceTestCase {
 
     private EntityManagerFactory entityManagerFactory;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         entityManagerFactory = Persistence.createEntityManagerFactory("sys");
+        System.out.println("EntityManagerFactory created: " + entityManagerFactory);
+        assertNotNull(entityManagerFactory);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         if (entityManagerFactory != null && entityManagerFactory.isOpen()) {
             entityManagerFactory.close();
@@ -34,9 +34,13 @@ public class CreateConferenceTestCase {
         String desc = "Test conference description";
 
         // Perform the test
-        boolean result = ConferenceDBHandler.createConference(conferenceName, creatorUsername, desc);
-
-        // Assert the result
-        assertTrue(result);
+        try {
+            boolean result = ConferenceDBHandler.createConference(conferenceName, creatorUsername, desc);
+            // Assert the result
+            assertTrue(result);
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail("Test failed with exception: " + e.getMessage());
+        }
     }
 }
