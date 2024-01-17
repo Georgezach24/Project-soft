@@ -27,8 +27,8 @@ class PasswordResetTestCase {
         em = ENTITY_MANAGER_FACTORY.createEntityManager();
         et = em.getTransaction();
         
-        UserDBHandler.registerUser("User008", "User00812!", "User00812!", "test@example.com", "123456789");
-        UserDBHandler.registerUser("User009", "User00912!!", "User00912!!", "test@example.com", "123456789");
+        UserDBHandler.registerUser("User008d", "User00812!", "User00812!", "test@example.com", "123456789");
+        UserDBHandler.registerUser("User009d", "User00912!!", "User00912!!", "test@example.com", "123456789");
     }
 
     @AfterEach
@@ -43,7 +43,7 @@ class PasswordResetTestCase {
     @Test
     public void testUpdatePassword() {
         // Assuming you have a user in the database with known username and password
-        String username = "User008";
+        String username = "User008d";
         String oldPassword = "User00812!";
         String newPassword = "User00712!";
 
@@ -82,7 +82,7 @@ class PasswordResetTestCase {
     @Test
     public void testUpdatePasswordInvalidNewPassword() {
         // Test when the new password is invalid
-        String username = "User009";
+        String username = "User009d";
         String oldPassword = "User00912!!";
         String newPassword1 = "invalid_password";  // Assuming this is an invalid password
 

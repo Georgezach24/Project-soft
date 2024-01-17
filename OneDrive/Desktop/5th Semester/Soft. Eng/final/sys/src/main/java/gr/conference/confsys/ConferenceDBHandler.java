@@ -132,7 +132,7 @@ public class ConferenceDBHandler {
 		return false;
 	}
 		
-	private static Conference getConferenceByName(EntityManager em, String conferenceName) {
+	public static Conference getConferenceByName(EntityManager em, String conferenceName) {
 	    System.out.println("Searching for conference with name: " + conferenceName);
 
 	    String query = "SELECT c FROM Conference c WHERE c.name = :name";
@@ -150,7 +150,7 @@ public class ConferenceDBHandler {
 	}
 
 
-    private static boolean isConferenceNameUnique(EntityManager em, String conferenceName) {
+    public static boolean isConferenceNameUnique(EntityManager em, String conferenceName) {
         String query = "SELECT COUNT(c) FROM Conference c WHERE c.name = :name";
         Long count = em.createQuery(query, Long.class)
                 .setParameter("name", conferenceName)

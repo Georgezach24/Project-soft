@@ -28,7 +28,7 @@ public class SearchConferenceTestCase {
     @Test
     public void testSearchConferences() {
         // Test data
-        String conferenceName = "Test Conference";
+        String conferenceName = "Test Conference1";
         String description = "Test conference description";
 
         // Create a test conference

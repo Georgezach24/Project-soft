@@ -31,7 +31,7 @@ public class CreateConferenceTestCase {
     @Test
     public void testCreateConference() {
         // Test data
-        String conferenceName = "Test Conference1";
+        String conferenceName = "Test Conference1fds";
         String creatorUsername = "Userconf";
         String desc = "Test conference descriptiosn";
 

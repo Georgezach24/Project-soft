@@ -29,7 +29,7 @@ public class AdminRegistrationIntegrationTest {
 
         // Insert an admin user into the database for testing
         User adminUser = new User();
-        adminUser.setUsername("admin");
+        adminUser.setUsername("admxzincsdx");
         adminUser.setRole("ADMIN");
         adminUser.setPassword("admin");
         em.persist(adminUser);
