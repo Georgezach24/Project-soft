@@ -27,7 +27,6 @@ public class AdminRegistrationIntegrationTest {
         em = emf.createEntityManager();
         em.getTransaction().begin();
 
-        // Insert an admin user into the database for testing
         User adminUser = new User();
         adminUser.setUsername("admxzincsdx");
         adminUser.setRole("ADMIN");
