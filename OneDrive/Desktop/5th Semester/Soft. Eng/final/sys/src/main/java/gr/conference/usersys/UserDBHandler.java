@@ -154,13 +154,13 @@ public class UserDBHandler{
 	            et.commit();
 	            return true;
 	        } else {
-	            // Handle the case where the new password is invalid or null
+	           
 	            et.rollback();
 	            return false;
 	        }
 
 	    } catch (NoResultException e) {
-	        // Handle the case where no user is found with the given username and old password
+	        
 	        et.rollback();
 	        return false;
 	    } catch (Exception e) {

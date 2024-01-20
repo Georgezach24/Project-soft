@@ -2,12 +2,14 @@ package gr.conference.confsys.test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import gr.conference.confsys.Conference;
 import gr.conference.confsys.ConferenceDBHandler;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 
@@ -22,7 +24,7 @@ class UpdateConferenceTestCase {
         assertNotNull(entityManagerFactory);
 
         try {
-            boolean test = ConferenceDBHandler.createConference("conference11", "user002", "descripto");
+            boolean test = ConferenceDBHandler.createConference("conference1", "Userconf", "descripto");
             assertTrue(test);
         } catch (Exception e) {
             e.printStackTrace();
@@ -36,22 +38,36 @@ class UpdateConferenceTestCase {
             entityManagerFactory.close();
         }
     }
+    
+    
 
     @Test
     public void testUpdateConference() {
-        // Test the updateConference method
-        boolean result = ConferenceDBHandler.updateConference("conference11", "newconfuser", "descuserconf");
-
-        // Check if the update was successful
+        
+        boolean result = ConferenceDBHandler.updateConference("conference1", "newconfuser", "descuserconf");
+ 
         assertTrue(result);
 
-        // Retrieve the updated conference from the handler
         Conference updatedConference = ConferenceDBHandler.getConferenceByName(
                 entityManagerFactory.createEntityManager(), "newconfuser");
-
-        // Check if the conference was actually updated
+        
         assertNotNull(updatedConference);
         assertEquals("newconfuser", updatedConference.getName());
         assertEquals("descuserconf", updatedConference.getDesc());
+    }
+    
+    @AfterAll
+    public static void deleteTestData() {
+        EntityManager deleteEntityManager = Persistence.createEntityManagerFactory("sys").createEntityManager();
+        deleteEntityManager.getTransaction().begin();
+        deleteEntityManager.createQuery("DELETE FROM Conference c WHERE c.conf_name = 'conference11';").executeUpdate();
+        deleteEntityManager.getTransaction().commit();
+        deleteEntityManager.close();
+        
+        EntityManager deleteEntityManager2 = Persistence.createEntityManagerFactory("sys").createEntityManager();
+        deleteEntityManager2.getTransaction().begin();
+        deleteEntityManager2.createQuery("DELETE FROM User u WHERE u.username = 'newconfuser';").executeUpdate();
+        deleteEntityManager2.getTransaction().commit();
+        deleteEntityManager2.close();
     }
 }
