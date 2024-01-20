@@ -94,43 +94,46 @@ public class ConferenceDBHandler {
         }
     }
 	
-	public static boolean updateConference(String oldConferenceName, String newName, String newDescription) 
-	{
-		EntityManager em = ENTITY_MANAGER_FACTORY.createEntityManager();
-		EntityTransaction et = em.getTransaction();
-		
-		try {
-		et.begin();
-		
-		Conference conferenceToUpdate = getConferenceByName(em, oldConferenceName);
-		
-		if (conferenceToUpdate != null) {
-			if (newName != null && !newName.isBlank()) {
-			conferenceToUpdate.setName(newName);
-			}
-			
-			if (newDescription != null) {
-			conferenceToUpdate.setDesc(newDescription);
-			}
-			
-			em.merge(conferenceToUpdate);
-			et.commit();
-			return true;
-		} 
-		else {
-			System.out.println("Conference not found!");
-			}
-			} catch (Exception e) {
-			e.printStackTrace();
-			if (et.isActive()) {
-			et.rollback();
-			}
-			} finally {
-			em.close();
-			}
-		
-		return false;
-	}
+    public static boolean updateConference(String oldConferenceName, String newName, String newDescription) {
+        EntityManager em = ENTITY_MANAGER_FACTORY.createEntityManager();
+        EntityTransaction et = em.getTransaction();
+
+        try {
+            et.begin();
+
+            Conference conferenceToUpdate = getConferenceByName(em, oldConferenceName);
+
+            if (conferenceToUpdate != null) {
+                System.out.println("Conference found: " + conferenceToUpdate.getName());
+
+                if (newName != null && !newName.isBlank()) {
+                    System.out.println("Updating name to: " + newName);
+                    conferenceToUpdate.setName(newName);
+                }
+
+                if (newDescription != null) {
+                    System.out.println("Updating description to: " + newDescription);
+                    conferenceToUpdate.setDesc(newDescription);
+                }
+
+                em.merge(conferenceToUpdate);
+                et.commit();
+                return true;
+            } else {
+                System.out.println("Conference not found!");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (et.isActive()) {
+                et.rollback();
+            }
+        } finally {
+            em.close();
+        }
+
+        return false;
+    }
+
 		
 	public static Conference getConferenceByName(EntityManager em, String conferenceName) {
 	    System.out.println("Searching for conference with name: " + conferenceName);
