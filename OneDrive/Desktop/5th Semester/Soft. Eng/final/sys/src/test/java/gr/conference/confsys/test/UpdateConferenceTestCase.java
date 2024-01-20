@@ -7,7 +7,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import gr.conference.confsys.Conference;
 import gr.conference.confsys.ConferenceDBHandler;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
@@ -24,7 +23,7 @@ class UpdateConferenceTestCase {
         assertNotNull(entityManagerFactory);
 
         try {
-            boolean test = ConferenceDBHandler.createConference("conference1", "User009d", "descripto");
+            boolean test = ConferenceDBHandler.createConference("conference1", "Userconf", "descripto");
             assertTrue(test);
         } catch (Exception e) {
             e.printStackTrace();
@@ -44,25 +43,26 @@ class UpdateConferenceTestCase {
     @Test
     public void testUpdateConference() {
         
-        boolean result = ConferenceDBHandler.updateConference("conference1", "newconfuser", "descuserconf");
+        boolean result = ConferenceDBHandler.updateConference("conference1", "Userconf", "descuserconf");
  
         assertTrue(result);
 
     }
     
-    /*
+    
     @AfterAll
     public static void deleteTestData() {
         EntityManager deleteEntityManager = Persistence.createEntityManagerFactory("sys").createEntityManager();
         deleteEntityManager.getTransaction().begin();
-        deleteEntityManager.createQuery("DELETE FROM Conference c WHERE c.conf_name = 'conference11';").executeUpdate();
+        deleteEntityManager.createQuery("DELETE FROM Conference c WHERE c.name = 'Userconf'").executeUpdate();
         deleteEntityManager.getTransaction().commit();
         deleteEntityManager.close();
-        
+
         EntityManager deleteEntityManager2 = Persistence.createEntityManagerFactory("sys").createEntityManager();
         deleteEntityManager2.getTransaction().begin();
-        deleteEntityManager2.createQuery("DELETE FROM User u WHERE u.username = 'User009d';").executeUpdate();
+        deleteEntityManager2.createQuery("DELETE FROM User u WHERE u.username = 'Userconf'").executeUpdate();
         deleteEntityManager2.getTransaction().commit();
         deleteEntityManager2.close();
-    }*/
+    }
+
 }
