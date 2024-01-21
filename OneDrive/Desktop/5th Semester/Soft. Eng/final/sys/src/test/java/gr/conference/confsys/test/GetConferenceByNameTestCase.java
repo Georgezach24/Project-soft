@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import gr.conference.confsys.Conference;
 import gr.conference.confsys.ConferenceDBHandler;
+import gr.conference.usersys.UserDBHandler;
 
 public class GetConferenceByNameTestCase {
 
@@ -24,6 +25,18 @@ public class GetConferenceByNameTestCase {
         if (entityManagerFactory != null && entityManagerFactory.isOpen()) {
             entityManagerFactory.close();
         }
+        
+        EntityManager deleteEntityManager = Persistence.createEntityManagerFactory("sys").createEntityManager();
+        deleteEntityManager.getTransaction().begin();
+        deleteEntityManager.createQuery("DELETE FROM Conference c WHERE c.name = 'testconf'").executeUpdate();
+        deleteEntityManager.getTransaction().commit();
+        deleteEntityManager.close();
+
+        EntityManager deleteEntityManager2 = Persistence.createEntityManagerFactory("sys").createEntityManager();
+        deleteEntityManager2.getTransaction().begin();
+        deleteEntityManager2.createQuery("DELETE FROM User u WHERE u.username = 'existingUser1'").executeUpdate();
+        deleteEntityManager2.getTransaction().commit();
+        deleteEntityManager2.close();
     }
 
     @Test
@@ -33,7 +46,9 @@ public class GetConferenceByNameTestCase {
         String description = "description1";
 
        
+        UserDBHandler.registerUser("existingUser1", "User02!@", "User02!@", "test@ex.com", "1234324345");
         createTestConference(conferenceName, description);
+        
 
         
         try (EntityManager em = entityManagerFactory.createEntityManager()) {

@@ -1,6 +1,10 @@
 package gr.conference.confsys.test;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.AfterAll;
+
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 import org.junit.jupiter.api.AfterEach;
@@ -26,6 +30,20 @@ public class CreateConferenceTestCase {
         if (entityManagerFactory != null && entityManagerFactory.isOpen()) {
             entityManagerFactory.close();
         }
+    }
+    @AfterAll
+    public static void deleteTestData() {
+        EntityManager deleteEntityManager = Persistence.createEntityManagerFactory("sys").createEntityManager();
+        deleteEntityManager.getTransaction().begin();
+        deleteEntityManager.createQuery("DELETE FROM Conference c WHERE c.name = 'Test Conference1fds'").executeUpdate();
+        deleteEntityManager.getTransaction().commit();
+        deleteEntityManager.close();
+
+        EntityManager deleteEntityManager2 = Persistence.createEntityManagerFactory("sys").createEntityManager();
+        deleteEntityManager2.getTransaction().begin();
+        deleteEntityManager2.createQuery("DELETE FROM User u WHERE u.username = 'Userconf'").executeUpdate();
+        deleteEntityManager2.getTransaction().commit();
+        deleteEntityManager2.close();
     }
 
     @Test

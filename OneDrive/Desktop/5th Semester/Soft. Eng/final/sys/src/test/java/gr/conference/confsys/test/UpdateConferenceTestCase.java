@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import gr.conference.confsys.ConferenceDBHandler;
+import gr.conference.usersys.UserDBHandler;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
@@ -21,9 +22,10 @@ class UpdateConferenceTestCase {
         entityManagerFactory = Persistence.createEntityManagerFactory("sys");
         System.out.println("EntityManagerFactory created: " + entityManagerFactory);
         assertNotNull(entityManagerFactory);
+        UserDBHandler.registerUser("Userconfe", "User02!@", "User02!@", "test@ex.com", "124324235");
 
         try {
-            boolean test = ConferenceDBHandler.createConference("conference1", "Userconf", "descripto");
+            boolean test = ConferenceDBHandler.createConference("conference1", "Userconfe", "descripto");
             assertTrue(test);
         } catch (Exception e) {
             e.printStackTrace();
@@ -60,7 +62,7 @@ class UpdateConferenceTestCase {
 
         EntityManager deleteEntityManager2 = Persistence.createEntityManagerFactory("sys").createEntityManager();
         deleteEntityManager2.getTransaction().begin();
-        deleteEntityManager2.createQuery("DELETE FROM User u WHERE u.username = 'Userconf'").executeUpdate();
+        deleteEntityManager2.createQuery("DELETE FROM User u WHERE u.username = 'Userconfe'").executeUpdate();
         deleteEntityManager2.getTransaction().commit();
         deleteEntityManager2.close();
     }

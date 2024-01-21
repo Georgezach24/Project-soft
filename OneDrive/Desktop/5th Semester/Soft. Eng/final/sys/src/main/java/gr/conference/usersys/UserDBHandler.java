@@ -36,7 +36,7 @@ public class UserDBHandler{
        EntityManager em = ENTITY_MANAGER_FACTORY.createEntityManager();
        EntityTransaction et = em.getTransaction();
 
-       if (!isAdminRegistered(em)) {
+       if (!isAdminRegistered("admin")) {
            try {
                et.begin();
                User adminUser = new User();
@@ -57,14 +57,22 @@ public class UserDBHandler{
        }
    }
 
-   public static boolean isAdminRegistered(EntityManager em) {
-       String query = "SELECT COUNT(u) FROM User u WHERE u.username = :username AND u.role = :role";
-       TypedQuery<Long> countQuery = em.createQuery(query, Long.class);
-       countQuery.setParameter("username", "admin");
-       countQuery.setParameter("role", "ADMIN");
-       long adminCount = countQuery.getSingleResult();
-       return adminCount > 0;
-   }
+   public static boolean isAdminRegistered(String username) {
+	    EntityManager em = Persistence.createEntityManagerFactory("sys").createEntityManager();
+	    try {
+	        String query = "SELECT COUNT(u) FROM User u WHERE u.username = :username AND u.role = :role";
+	        TypedQuery<Long> countQuery = em.createQuery(query, Long.class);
+	        countQuery.setParameter("username", username);
+	        countQuery.setParameter("role", "ADMIN");
+	        long adminCount = countQuery.getSingleResult();
+	        return adminCount > 0;
+	    } finally {
+	        if (em != null && em.isOpen()) {
+	            em.close();
+	        }
+	    }
+	}
+
   
    public static void registerUser(String username, String password, String password2, String email, String phone) {
 	    EntityManager em = Persistence.createEntityManagerFactory("sys").createEntityManager();

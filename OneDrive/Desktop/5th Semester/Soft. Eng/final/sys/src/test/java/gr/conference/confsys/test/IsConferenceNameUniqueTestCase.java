@@ -8,6 +8,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import gr.conference.confsys.ConferenceDBHandler;
+import gr.conference.usersys.UserDBHandler;
 
 public class IsConferenceNameUniqueTestCase {
 
@@ -22,6 +23,18 @@ public class IsConferenceNameUniqueTestCase {
     public static void tearDownClass() {
         if (entityManagerFactory != null && entityManagerFactory.isOpen()) {
             entityManagerFactory.close();
+            
+            EntityManager deleteEntityManager = Persistence.createEntityManagerFactory("sys").createEntityManager();
+            deleteEntityManager.getTransaction().begin();
+            deleteEntityManager.createQuery("DELETE FROM Conference c WHERE c.name = 'existingConf'").executeUpdate();
+            deleteEntityManager.getTransaction().commit();
+            deleteEntityManager.close();
+
+            EntityManager deleteEntityManager2 = Persistence.createEntityManagerFactory("sys").createEntityManager();
+            deleteEntityManager2.getTransaction().begin();
+            deleteEntityManager2.createQuery("DELETE FROM User u WHERE u.username = 'existingUser1'").executeUpdate();
+            deleteEntityManager2.getTransaction().commit();
+            deleteEntityManager2.close();
         }
     }
 
@@ -31,7 +44,7 @@ public class IsConferenceNameUniqueTestCase {
         String existingConferenceName = "existingConf";
         String newConferenceName = "newConf";
 
-       
+        UserDBHandler.registerUser("existingUser1", "User02!@", "User02!@", "test@ex.com", "1234324345");
         createTestConference(existingConferenceName, "existingDesc");
 
        
