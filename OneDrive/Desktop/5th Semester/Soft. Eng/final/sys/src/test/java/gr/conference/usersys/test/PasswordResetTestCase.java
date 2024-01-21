@@ -2,6 +2,7 @@ package gr.conference.usersys.test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,6 +38,15 @@ class PasswordResetTestCase {
         if (em != null && em.isOpen()) {
             em.close();
         }
+    }
+    @AfterAll
+    public static void deleteTestData() {
+        EntityManager deleteEntityManager = Persistence.createEntityManagerFactory("sys").createEntityManager();
+        deleteEntityManager.getTransaction().begin();
+        deleteEntityManager.createQuery("DELETE FROM User u WHERE u.username = 'User008d'").executeUpdate();
+        deleteEntityManager.createQuery("DELETE FROM User u WHERE u.username = 'User009d'").executeUpdate();
+        deleteEntityManager.getTransaction().commit();
+        deleteEntityManager.close();
     }
 
     

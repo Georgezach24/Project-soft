@@ -67,42 +67,42 @@ public class UserDBHandler{
    }
   
    public static void registerUser(String username, String password, String password2, String email, String phone) {
-   EntityManager em = ENTITY_MANAGER_FACTORY.createEntityManager();
-   EntityTransaction et = em.getTransaction();
-   try {
-       et.begin();
+	    EntityManager em = Persistence.createEntityManagerFactory("sys").createEntityManager();
+	    EntityTransaction et = em.getTransaction();
+	    try {
+	        et.begin();
 
-       String query = "SELECT COUNT(u) FROM User u WHERE u.username = :username";
-       TypedQuery<Long> countQuery = em.createQuery(query, Long.class);
-       countQuery.setParameter("username", username);
-       long existingUserCount = countQuery.getSingleResult();
+	        String query = "SELECT COUNT(u) FROM User u WHERE u.username = :username";
+	        TypedQuery<Long> countQuery = em.createQuery(query, Long.class);
+	        countQuery.setParameter("username", username);
+	        long existingUserCount = countQuery.getSingleResult();
 
-       if (existingUserCount == 0 && !username.isBlank() && !password.isBlank()
-    		   && isPasswordValid(password) && isUsernameValid(username)
-    		   && password.equals(password2)) 
-       {
-           User newUser = new User();
-           newUser.setName(null);
-           newUser.setSurname(null);
-           newUser.setUsername(username);
-           newUser.setPassword(password);
-           newUser.setEmail(email);
-           newUser.setPhone(phone);
-           newUser.setUser_status("ACTIVE");
-           newUser.setRole("USER");
-           
-           em.persist(newUser);
-           et.commit();
-       } 
-   } catch (Exception e) {
-       e.printStackTrace();
-   } finally {
-       if (et.isActive()) {
-           et.rollback();
-       }
-       em.close();
-   }
-}
+	        if (existingUserCount == 0 && !username.isBlank() && !password.isBlank()
+	                && isPasswordValid(password) && isUsernameValid(username)
+	                && password.equals(password2)) {
+	            User newUser = new User();
+	            newUser.setName(null);
+	            newUser.setSurname(null);
+	            newUser.setUsername(username);
+	            newUser.setPassword(password);
+	            newUser.setEmail(email);
+	            newUser.setPhone(phone);
+	            newUser.setUser_status("ACTIVE");
+	            newUser.setRole("USER");
+
+	            em.persist(newUser);
+	            et.commit();
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        if (et.isActive()) {
+	            et.rollback();
+	        }
+	        em.close();
+	    }
+	}
+
    
    
 

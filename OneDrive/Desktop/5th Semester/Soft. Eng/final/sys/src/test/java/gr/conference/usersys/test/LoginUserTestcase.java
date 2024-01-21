@@ -39,7 +39,7 @@ class LoginUserTestcase {
 
     @Test
     public void testLoginUserSuccess() {
-        boolean result = UserDBHandler.loginUser("User02d", "User02@!");
+        boolean result = UserDBHandler.loginUser("User0002", "User02@!");
         assertTrue(result, "Login for user 'User02d' with correct password should succeed, but it failed.");
     }
 

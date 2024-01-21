@@ -1,14 +1,9 @@
 package gr.conference.usersys.test;
 
 import static org.junit.jupiter.api.Assertions.*;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
 import gr.conference.usersys.UserDBHandler;
-
-
-
 
 
 public class UsernamePasswordTestCase {
@@ -35,5 +30,5 @@ public class UsernamePasswordTestCase {
         assertFalse(UserDBHandler.isUsernameValid("_invalid"), "Username starting with an underscore passed");
         assertTrue(UserDBHandler.isUsernameValid("Valid_Use_123"), "Valid username with underscores failed");
     }
-}
-
+    
+    }
