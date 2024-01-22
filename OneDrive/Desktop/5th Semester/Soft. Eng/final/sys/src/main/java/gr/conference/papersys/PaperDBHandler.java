@@ -1,115 +1,88 @@
 package gr.conference.papersys;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.Persistence;
+
+import java.util.Date;
 
 import gr.conference.usersys.User;
+import gr.conference.confsys.*;
 
 public class PaperDBHandler {
 
-    private Map<Long, Paper> papers;
+    public static EntityManager ENTITY_MANAGER = Persistence.createEntityManagerFactory("sys").createEntityManager();
 
-    public PaperDBHandler() {
-        this.papers = new HashMap<>();
-    }
+    public static boolean createPaper(String conferenceName, String creatorUsername, String title) {
+        EntityTransaction transaction = ENTITY_MANAGER.getTransaction();
 
-    public void savePaper(Paper paper) {
-        paper.setId(generateId());
-        paper.setCreationDate(LocalDateTime.now());
+        try {
+            transaction.begin();
 
-        paper.setState(Paper.PaperState.CREATED);
+            if (isPaperTitleUnique(conferenceName, title)) {
+                Conference conference = getConferenceByName(conferenceName);
 
-        validateObligatoryInformation(paper);
+                if (conference != null) {
+                	User creator = ENTITY_MANAGER.createQuery("SELECT u FROM User u WHERE u.username = :username", User.class)
+                		    .setParameter("username", creatorUsername)
+                		    .getSingleResult();
 
-        
-        papers.put(paper.getId(), paper);
-    }
+                    if (creator != null) {
+                        Paper newPaper = new Paper();
+                        newPaper.setTitle(title);
+                        newPaper.setAuthorNames(creator.getName());
+                        newPaper.setContent(null);
+                        newPaper.setCreationDate(new Date());
+                        newPaper.setU_id(creator.getUserId());
+                        newPaper.setConf_id(conference.getId());
+                        newPaper.setPaperState("CREATED");
 
-    public Paper getPaperById(Long paperId) {
-        return papers.get(paperId);
-    }
+                        creator.setRole("AUTHOR");
 
-    public List<Paper> getAllPapers() {
-        return new ArrayList<>(papers.values());
-    }
-
-    public void updatePaper(Paper updatedPaper) {
-        
-        papers.put(updatedPaper.getId(), updatedPaper);
-    }
-
-    public void deletePaper(Long paperId) {
-        papers.remove(paperId);
-    }
-
-    public List<Paper> getPapersByState(Paper.PaperState state) {
-        List<Paper> papersByState = new ArrayList<>();
-        for (Paper paper : papers.values()) {
-            if (paper.getState() == state) {
-                papersByState.add(paper);
+                        ENTITY_MANAGER.persist(newPaper);
+                        transaction.commit();
+                        return true;
+                    } else {
+                        System.out.println("Creator not found!");
+                    }
+                } else {
+                    System.out.println("Conference not found!");
+                }
+            } else {
+                System.out.println("Paper title is not unique within the conference!");
             }
-        }
-        return papersByState;
-    }
-
-    public List<Paper> getPapersByReviewer(User reviewer) {
-        List<Paper> papersByReviewer = new ArrayList<>();
-        for (Paper paper : papers.values()) {
-            if (paper.getReviewers().contains(reviewer)) {
-                papersByReviewer.add(paper);
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (transaction.isActive()) {
+                transaction.rollback();
             }
+        } finally {
+            ENTITY_MANAGER.close();
         }
-        return papersByReviewer;
+
+        return false;
     }
 
-    public void submitPaper(Long paperId) {
-        Paper paper = papers.get(paperId);
-        if (paper != null && paper.getState() == Paper.PaperState.CREATED) {
-            paper.setState(Paper.PaperState.SUBMITTED);
+    private static boolean isPaperTitleUnique(String conferenceName, String paperTitle) {
+        Conference conference = getConferenceByName(conferenceName);
+
+        if (conference != null) {
+            String query = "SELECT COUNT(p) FROM Paper p WHERE p.conf_id = :conf_id AND p.title = :paperTitle";
+            Long count = ENTITY_MANAGER.createQuery(query, Long.class)
+                    .setParameter("conf_id", conference.getId()) 
+                    .setParameter("paperTitle", paperTitle)
+                    .getSingleResult();
+
+            return count == 0;
         }
+
+        return false;
     }
 
-    public void reviewPaper(Long paperId) {
-        Paper paper = papers.get(paperId);
-        if (paper != null && paper.getState() == Paper.PaperState.SUBMITTED) {
-            paper.setState(Paper.PaperState.REVIEWED);
-        }
-    }
-
-    public void rejectPaper(Long paperId) {
-        Paper paper = papers.get(paperId);
-        if (paper != null && paper.getState() == Paper.PaperState.REVIEWED) {
-            paper.setState(Paper.PaperState.REJECTED);
-        }
-    }
-
-    public void approvePaper(Long paperId) {
-        Paper paper = papers.get(paperId);
-        if (paper != null && paper.getState() == Paper.PaperState.REVIEWED) {
-            paper.setState(Paper.PaperState.APPROVED);
-        }
-    }
-
-    public void acceptPaper(Long paperId) {
-        Paper paper = papers.get(paperId);
-        if (paper != null && paper.getState() == Paper.PaperState.APPROVED) {
-            paper.setState(Paper.PaperState.ACCEPTED);
-        }
-    }
-
-    
-    private Long generateId() {
-        return System.currentTimeMillis(); 
-    }
-
-    private void validateObligatoryInformation(Paper paper) {
-        if (paper.getTitle() == null || paper.getAbstractText() == null ||
-            paper.getAuthorNames() == null || paper.getSubmitter() == null ||
-            paper.getReviewers() == null || paper.getReviewers().size() != 2) {
-            throw new IllegalArgumentException("Invalid paper: Obligatory information missing");
-        }
+    private static Conference getConferenceByName(String conferenceName) {
+        String query = "SELECT c FROM Conference c WHERE c.name = :name";
+        return ENTITY_MANAGER.createQuery(query, Conference.class)
+                .setParameter("name", conferenceName)
+                .getSingleResult();
     }
 }

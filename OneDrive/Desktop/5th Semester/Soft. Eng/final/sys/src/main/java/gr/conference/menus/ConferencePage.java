@@ -2,7 +2,9 @@ package gr.conference.menus;
 
 import java.util.Scanner;
 
-import gr.conference.confsys.RestClient;
+
+import gr.conference.confsys.*;
+
 
 public class ConferencePage {
 	public ConferencePage(String username ,String confName)
@@ -15,9 +17,9 @@ public class ConferencePage {
 		Scanner scanner = new Scanner(System.in);
 		Integer flag = 0;
 		
-		System.out.println(username.toUpperCase() + "you are inside conference: " + confName.toUpperCase());
+		System.out.println(username.toUpperCase() + " you are inside conference: " + confName.toUpperCase());
 		System.out.println("1. Update conference info");
-		System.out.println("2. ----------");
+		System.out.println("2. Create new Paper");
 		System.out.println("3. Back");
 		System.out.print("> ");
 		int input = scanner.nextInt();
@@ -32,6 +34,7 @@ public class ConferencePage {
 				break;
 			case 2:
 				flag = 1;
+				createPaper(confName, username);
 				break;
 			case 3:
 				flag = 1;
@@ -57,5 +60,15 @@ public class ConferencePage {
 		String desc = scanner.nextLine();
 		RestClient.confUpdatePost(confName, newName, desc);
 		ConferencePage cp = new ConferencePage(username, confName);
+	}
+	
+	private void createPaper(String confName, String username)
+	{
+		Scanner scanner = new Scanner(System.in);
+		
+		gr.conference.papersys.RestClient.createPaperRequest();
+		System.out.print("Insert Paper title: ");
+		String paper_nameString = scanner.nextLine();
+		gr.conference.papersys.RestClient.paperCreatePost(paper_nameString, username, confName);
 	}
 }

@@ -1,5 +1,16 @@
 package gr.conference.papersys;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.HttpClients;
+
+import gr.conference.confsys.ConferenceDBHandler;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
@@ -7,74 +18,55 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 public class RestClient {
+	
+	public static void createPaperRequest()
+	{
+		HttpClient client = HttpClients.createDefault();
+	       HttpGet request = new HttpGet("http://localhost:8080/system/webapi/paper/create");
+	       request.addHeader("accept", "text/plain");
 
-    private static final String BASE_URL = "http://localhost:8080/system/webapi/paper/create"; 
+	       try {
+	           HttpResponse response = client.execute(request);
+	           BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
 
-    private final Client client;
+	           String line;
+	           StringBuilder result = new StringBuilder();
+	           while ((line = reader.readLine()) != null) {
+	               result.append(line);
+	           }
 
-    public RestClient() {
-        this.client = ClientBuilder.newClient();
-    }
+	           System.out.println("GET Response:\n" + result.toString());
+	       } catch (IOException e) {
+	           e.printStackTrace();
+	       }
+	}
+	
+	public static String paperCreatePost(String name , String user , String conf) {
+		   PaperDBHandler.createPaper(conf , user , name);
+		  
+		   HttpClient client = HttpClients.createDefault();
+	       
+	       HttpPost request = new HttpPost("http://localhost:8080/system/webapi/paper/create/" + conf + "/" + user + "/" + name);
+	       request.addHeader("accept", "application/json");
 
-    public ResponseMessage createPaper(Paper paper) {
-        try {
-            Response response = client.target(BASE_URL + "/paper")
-                    .request(MediaType.APPLICATION_JSON)
-                    .post(Entity.entity(paper, MediaType.APPLICATION_JSON));
+	       try {
+	    	   
+	           HttpResponse response = client.execute(request);
+	           BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
 
-            if (response.getStatus() == Response.Status.CREATED.getStatusCode()) {
-                return response.readEntity(ResponseMessage.class);
-            } else {
-                
-                return response.readEntity(ResponseMessage.class);
-            }
-        } finally {
-            client.close();
-        }
-    }
-
-    public Paper getPaperById(Long paperId) {
-        try {
-            Response response = client.target(BASE_URL + "/paper/" + paperId)
-                    .request(MediaType.APPLICATION_JSON)
-                    .get();
-
-            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
-                return response.readEntity(Paper.class);
-            } else if (response.getStatus() == Response.Status.NOT_FOUND.getStatusCode()) {
-                
-                return null;
-            } else {
-                
-                return null;
-            }
-        } finally {
-            client.close();
-        }
-    }
-
-    
-
-    public static void main(String[] args) {
-        RestClient restClient = new RestClient();
-
-        
-        Paper newPaper = new Paper();
-        newPaper.setTitle("Sample Paper");
-        
-
-        ResponseMessage createResponse = restClient.createPaper(newPaper);
-        System.out.println("Create Paper Response: " + createResponse.getResponseMessage());
-
-        
-        Long paperIdToRetrieve = 1L; 
-        Paper retrievedPaper = restClient.getPaperById(paperIdToRetrieve);
-        if (retrievedPaper != null) {
-            System.out.println("Retrieved Paper: " + retrievedPaper);
-        } else {
-            System.out.println("Paper not found");
-        }
-
-       
-    }
+	           String line;
+	           StringBuilder result = new StringBuilder();
+	           while ((line = reader.readLine()) != null) {
+	               result.append(line);
+	           }
+	           
+	           
+	           System.out.println("POST Response:\n" + result.toString());
+	           return result.toString();
+	       } catch (IOException e) {
+	           e.printStackTrace();
+	       }
+	       
+	       return null;
+	 }
 }

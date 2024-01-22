@@ -10,6 +10,7 @@ xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml
 
         <class>gr.conference.usersys.User</class>
         <class>gr.conference.confsys.Conference</class>
+        <class>gr.conference.papersys.Paper</class>
         <properties>
 
             <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver" />
