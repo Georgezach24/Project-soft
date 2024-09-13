@@ -1,10 +1,12 @@
 package gr.conference.papersys;
 
 import jakarta.persistence.*;
-
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import gr.conference.confsys.Conference;
+import gr.conference.usersys.User;
 
 @Entity
 @Table(name = "paper")
@@ -21,9 +23,10 @@ public class Paper {
     @Column(name = "abstract_text")
     private String abstractText;
 
-    @Column(name = "author_names", nullable = true)
+    @Column(name = "author_names")
     private String authorNames;
 
+    @Lob
     @Column(name = "content")
     private byte[] content;
 
@@ -31,104 +34,118 @@ public class Paper {
     @Column(name = "creation_date", nullable = false)
     private Date creationDate;
 
-    @Column(name="user_id")
-    private long u_id;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User creator;  // Αναφορά στον δημιουργό αντί για το αναγνωριστικό (u_id)
 
-    @Column(name = "conf_id")
-    private float conf_id;
+    @ManyToOne
+    @JoinColumn(name = "conf_id", nullable = false)
+    private Conference conference;  // Αναφορά στο Conference αντί για το conf_id
 
-    @Column(name="score")
+    @OneToMany(mappedBy = "paper", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Review> reviews = new ArrayList<>();
+
+    @Column(name = "score")
     private int score;
 
     @Column(name = "paper_state", nullable = false)
     private String paperState;
 
-	public Long getId() {
-		return id;
-	}
+    // Getters and setters
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public String getTitle() {
-		return title;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+    public String getTitle() {
+        return title;
+    }
 
-	public String getAbstractText() {
-		return abstractText;
-	}
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-	public void setAbstractText(String abstractText) {
-		this.abstractText = abstractText;
-	}
+    public String getAbstractText() {
+        return abstractText;
+    }
 
-	public String getAuthorNames() {
-		return authorNames;
-	}
+    public void setAbstractText(String abstractText) {
+        this.abstractText = abstractText;
+    }
 
-	public void setAuthorNames(String authorNames) {
-		this.authorNames = authorNames;
-	}
+    public String getAuthorNames() {
+        return authorNames;
+    }
 
-	public byte[] getContent() {
-		return content;
-	}
+    public void setAuthorNames(String authorNames) {
+        this.authorNames = authorNames;
+    }
 
-	public void setContent(byte[] content) {
-		this.content = content;
-	}
+    public byte[] getContent() {
+        return content;
+    }
 
-	public Date getCreationDate() {
-		return creationDate;
-	}
+    public void setContent(byte[] content) {
+        this.content = content;
+    }
 
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
-	}
+    public Date getCreationDate() {
+        return creationDate;
+    }
 
-	public long getU_id() {
-		return u_id;
-	}
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
 
-	public void setU_id(long u_id) {
-		this.u_id = u_id;
-	}
+    public User getCreator() {
+        return creator;
+    }
 
-	public float getConf_id() {
-		return conf_id;
-	}
+    public void setCreator(User creator) {
+        this.creator = creator;
+    }
 
-	public void setConf_id(float conf_id) {
-		this.conf_id = conf_id;
-	}
+    public Conference getConference() {
+        return conference;
+    }
 
-	public int getScore() {
-		return score;
-	}
+    public void setConference(Conference conference) {
+        this.conference = conference;
+    }
 
-	public void setScore(int score) {
-		this.score = score;
-	}
+    public List<Review> getReviews() {
+        return reviews;
+    }
 
-	public String getPaperState() {
-		return paperState;
-	}
+    public void addReview(Review review) {
+        this.reviews.add(review);
+        review.setPaper(this);  // Συσχέτιση του review με το paper
+    }
 
-	public void setPaperState(String paperState) {
-		this.paperState = paperState;
-	}
+    public int getScore() {
+        return score;
+    }
 
-	@Override
-	public String toString() {
-		return "Paper [id=" + id + ", title=" + title + ", abstractText=" + abstractText + ", authorNames="
-				+ authorNames + ", content=" + Arrays.toString(content) + ", creationDate=" + creationDate + ", u_id="
-				+ u_id + ", conf_id=" + conf_id + ", score=" + score + ", paperState=" + paperState + "]";
-	}
+    public void setScore(int score) {
+        this.score = score;
+    }
 
+    public String getPaperState() {
+        return paperState;
+    }
 
+    public void setPaperState(String paperState) {
+        this.paperState = paperState;
+    }
+
+    @Override
+    public String toString() {
+        return "Paper [id=" + id + ", title=" + title + ", abstractText=" + abstractText + ", authorNames="
+                + authorNames + ", creationDate=" + creationDate + ", creator=" + creator.getName()
+                + ", conference=" + conference.getName() + ", score=" + score + ", paperState=" + paperState + "]";
+    }
 }

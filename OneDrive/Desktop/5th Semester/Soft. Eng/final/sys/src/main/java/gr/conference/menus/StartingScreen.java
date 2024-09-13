@@ -24,8 +24,7 @@ public class StartingScreen {
 			System.out.println("1. LOGIN");
 			System.out.println("2. REGISTER");
 			System.out.println("3. CONTINUE AS GUEST");
-			System.out.println("4. ADMIN LOGIN");
-			System.out.println("5. EXIT");
+			System.out.println("4. EXIT");
 			System.out.print("Your input >");
 			int input = scanner.nextInt();
 		
@@ -45,10 +44,6 @@ public class StartingScreen {
 					//TODO Φτιάξε τι θα γίνεται σε περίπτωση visitor.
 					break;	
 				case 4:
-					flag =1;
-					lp.loadPageAdmin();
-					break;
-				case 5:
 					flag = 1;
 					System.exit(0);
 					break;

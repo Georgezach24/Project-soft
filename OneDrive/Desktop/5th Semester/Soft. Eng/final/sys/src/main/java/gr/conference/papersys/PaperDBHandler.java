@@ -2,7 +2,6 @@ package gr.conference.papersys;
 
 import java.util.Date;
 
-import gr.conference.*;
 import gr.conference.confsys.Conference;
 import gr.conference.usersys.User;
 import jakarta.persistence.EntityManager;
@@ -12,13 +11,14 @@ import jakarta.persistence.Persistence;
 
 public class PaperDBHandler {
 
-    private static EntityManagerFactory ENTITY_MANAGER_FACTORY = Persistence.createEntityManagerFactory("sys");
+    private static EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("sys");
 
     public static boolean createPaper(String conferenceName, String creatorUsername, String title) {
-        EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
-        EntityTransaction transaction = entityManager.getTransaction();
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        EntityTransaction transaction = null;
 
         try {
+            transaction = entityManager.getTransaction();
             transaction.begin();
 
             if (isPaperTitleUnique(conferenceName, title, entityManager)) {
@@ -35,11 +35,9 @@ public class PaperDBHandler {
                         newPaper.setAuthorNames(creator.getName());
                         newPaper.setContent(null);
                         newPaper.setCreationDate(new Date());
-                        newPaper.setU_id(creator.getUserId());
-                        newPaper.setConf_id(conference.getId());
+                        newPaper.setCreator(creator);  // Replace u_id with actual User reference
+                        newPaper.setConference(conference);  // Replace conf_id with actual Conference reference
                         newPaper.setPaperState("CREATED");
-
-                        creator.setRole("AUTHOR");
 
                         entityManager.persist(newPaper);
                         transaction.commit();
@@ -54,30 +52,27 @@ public class PaperDBHandler {
                 System.out.println("Paper title is not unique within the conference!");
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            if (transaction.isActive()) {
-                transaction.rollback();
+            if (transaction != null && transaction.isActive()) {
+                transaction.rollback();  // Rollback transaction on failure
             }
+            e.printStackTrace();
         } finally {
-            entityManager.close();  // Κλείνουμε το EntityManager για να απελευθερώσουμε πόρους
+            entityManager.close();  // Always close EntityManager
         }
-
         return false;
     }
 
     private static boolean isPaperTitleUnique(String conferenceName, String paperTitle, EntityManager entityManager) {
         Conference conference = getConferenceByName(conferenceName, entityManager);
-
         if (conference != null) {
-            String query = "SELECT COUNT(p) FROM Paper p WHERE p.conf_id = :conf_id AND p.title = :paperTitle";
+            String query = "SELECT COUNT(p) FROM Paper p WHERE p.conference = :conference AND p.title = :paperTitle";
             Long count = entityManager.createQuery(query, Long.class)
-                    .setParameter("conf_id", conference.getId())
+                    .setParameter("conference", conference)
                     .setParameter("paperTitle", paperTitle)
                     .getSingleResult();
 
             return count == 0;
         }
-
         return false;
     }
 
