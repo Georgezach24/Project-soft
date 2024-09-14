@@ -32,7 +32,7 @@ public class RestClient {
     public static String registerPost(String username, String password, String passwordConf, String email, String phone) {
         HttpClient client = HttpClients.createDefault();
         StringBuilder result = new StringBuilder();
-        HttpPost request = new HttpPost("http://localhost:8080/system/webapi/usermng/register/" + username + "/" + password + "/" + email + "/" + phone);
+        HttpPost request = new HttpPost("http://localhost:8080/system/webapi/usermng/register/" + username + "/" + password + "/" + passwordConf + "/" + email + "/" + phone);
         request.addHeader("accept", "application/json");
 
         try {

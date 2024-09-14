@@ -93,7 +93,7 @@ public class WebResource {
     @Produces("application/json")
     public String login(@PathParam("p1") String username, @PathParam("p2") String password) {
         ResponseMessage msg = new ResponseMessage();
-        String role = UserDBHandler.loginUser(username, password); // Now returns the role
+        String role = UserDBHandler.loginUser(username, password); 
 
         if (role != null) {
             msg.setResponseCode("200");
@@ -111,12 +111,12 @@ public class WebResource {
     }
 
     @POST
-    @Path("/register/{p1}/{p2}/{p3}/{p4}")
+    @Path("/register/{p1}/{p2}/{p3}/{p4}/{p5}")
     @Produces("application/json")
     public String register(@PathParam("p1") String username,
-                           @PathParam("p2") String password, @PathParam("p3") String email, @PathParam("p4") String phone) {
+                           @PathParam("p2") String password, @PathParam("p3") String passwordConf, @PathParam("p4") String email , @PathParam("p5") String phone) {
         ResponseMessage msg = new ResponseMessage();
-        if (UserDBHandler.loginUser(username, password) != null) {
+        if (UserDBHandler.registerUser(username,password,passwordConf,email,phone)) {
             msg.setResponseCode("200");
             msg.setResponseMessage("Success registering user");
         } else {

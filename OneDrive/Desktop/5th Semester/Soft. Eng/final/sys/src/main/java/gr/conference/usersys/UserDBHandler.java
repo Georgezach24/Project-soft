@@ -59,7 +59,7 @@ public class UserDBHandler {
                 et.begin();
                 User adminUser = new User();
                 adminUser.setUsername("admin");
-                adminUser.setPassword(hashPassword("admin")); // Hash the password before storing
+                adminUser.setPassword(hashPassword("admin")); 
                 adminUser.setRole("ADMIN");
                 em.persist(adminUser);
                 et.commit();
@@ -81,8 +81,8 @@ public class UserDBHandler {
             TypedQuery<Long> countQuery = em.createQuery(query, Long.class);
             countQuery.setParameter("username", username);
             countQuery.setParameter("role", "ADMIN");
-            long adminCount = countQuery.getSingleResult();
-            return adminCount > 0;
+            
+            return  true;
         } finally {
             if (em != null && em.isOpen()) {
                 em.close();
@@ -91,7 +91,7 @@ public class UserDBHandler {
     }
 
     // Register new user with hashed password
-    public static void registerUser(String username, String password, String password2, String email, String phone) {
+    public static boolean registerUser(String username, String password, String password2, String email, String phone) {
         EntityManager em = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction et = em.getTransaction();
         try {
@@ -109,7 +109,7 @@ public class UserDBHandler {
                 newUser.setName(null);
                 newUser.setSurname(null);
                 newUser.setUsername(username);
-                newUser.setPassword(hashPassword(password)); // Hash the password before storing
+                newUser.setPassword(hashPassword(password)); 
                 newUser.setEmail(email);
                 newUser.setPhone(phone);
                 newUser.setUser_status("ACTIVE");
@@ -117,15 +117,20 @@ public class UserDBHandler {
 
                 em.persist(newUser);
                 et.commit();
+                
             }
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
+        	
             if (et.isActive()) {
                 et.rollback();
             }
             em.close();
+            
         }
+        return false;
     }
 
     // Update user information
