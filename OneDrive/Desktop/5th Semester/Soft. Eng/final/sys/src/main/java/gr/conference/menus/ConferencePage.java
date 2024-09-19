@@ -69,6 +69,11 @@ public class ConferencePage {
 		gr.conference.papersys.RestClient.createPaperRequest();
 		System.out.print("Insert Paper title: ");
 		String paper_nameString = scanner.nextLine();
-		gr.conference.papersys.RestClient.paperCreatePost(paper_nameString, username, confName);
+		String output= gr.conference.papersys.RestClient.paperCreatePost(paper_nameString, username, confName);
+		
+		if(output.equals("{\\\"responseMessage\\\":\\\"Paper created successfully\\\",\\\"responseCode\\\":\\\"200\\\"}"))
+		{
+			//ToDo: Create a paper screen.
+		}
 	}
 }

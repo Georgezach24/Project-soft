@@ -45,7 +45,7 @@ public class LoginPage {
 
         if (UserDBHandler.loginTries == 0) {
             System.out.println("Too many failed attempts. Access denied.");
-        }
+            StartingScreen ss = new StartingScreen();        }
 
         scanner.close();
     }

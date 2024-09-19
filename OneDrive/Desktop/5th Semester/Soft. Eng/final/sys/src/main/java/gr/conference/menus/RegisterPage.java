@@ -36,7 +36,7 @@ public class RegisterPage {
 
 	    
 
-	    StartingScreen ss = new StartingScreen();
+	    StartingScreen ss = new StartingScreen();//Επιστροφή στην αρχική.
 	    
 	    scanner.close();
 	}
