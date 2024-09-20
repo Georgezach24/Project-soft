@@ -1,68 +1,43 @@
 package gr.conference.papersys;
 
 import jakarta.persistence.*;
+import gr.conference.usersys.User;
 
-@Entity
-@Table(name = "review")
+@Embeddable
 public class Review {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "review_id", nullable = false, unique = true)
-    private Long id;
-
-    @Column(name = "reviewer_name", nullable = false)
-    private String reviewerName;
 
     @Column(name = "score")
     private int score;
 
-    @Column(name = "comments")
-    private String comments;
+    @Column(name = "justification")
+    private String justification;
 
     @ManyToOne
-    @JoinColumn(name = "paper_id", nullable = false)
-    private Paper paper;
+    private User reviewer;
 
-    // Getters και Setters
+	public int getScore() {
+		return score;
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public void setScore(int score) {
+		this.score = score;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public String getJustification() {
+		return justification;
+	}
 
-    public String getReviewerName() {
-        return reviewerName;
-    }
+	public void setJustification(String justification) {
+		this.justification = justification;
+	}
 
-    public void setReviewerName(String reviewerName) {
-        this.reviewerName = reviewerName;
-    }
+	public User getReviewer() {
+		return reviewer;
+	}
 
-    public int getScore() {
-        return score;
-    }
+	public void setReviewer(User reviewer) {
+		this.reviewer = reviewer;
+	}
 
-    public void setScore(int score) {
-        this.score = score;
-    }
-
-    public String getComments() {
-        return comments;
-    }
-
-    public void setComments(String comments) {
-        this.comments = comments;
-    }
-
-    public Paper getPaper() {
-        return paper;
-    }
-
-    public void setPaper(Paper paper) {
-        this.paper = paper;
-    }
+    
 }

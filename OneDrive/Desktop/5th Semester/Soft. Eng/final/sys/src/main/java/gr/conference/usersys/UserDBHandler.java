@@ -288,4 +288,18 @@ public class UserDBHandler {
             throw new RuntimeException(e);
         }
     }
+    
+    public User findUserById(Long userId) {
+        EntityManager em = ENTITY_MANAGER_FACTORY.createEntityManager();
+        User user = null;
+        try {
+            // Find the user by ID using JPA's find method
+            user = em.find(User.class, userId);
+        } catch (Exception e) {
+            e.printStackTrace(); // Handle any exceptions if necessary
+        } finally {
+            em.close();
+        }
+        return user;
+    }
 }

@@ -1,85 +1,140 @@
 package gr.conference.papersys;
 
-import java.util.Date;
-
-import gr.conference.confsys.Conference;
 import gr.conference.usersys.User;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.Persistence;
+
+import jakarta.persistence.*;
+import java.util.List;
 
 public class PaperDBHandler {
 
-    private static EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("sys");
+    private EntityManagerFactory emf;
 
-    public static boolean createPaper(String conferenceName, String creatorUsername, String title) {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
-        EntityTransaction transaction = null;
+    public PaperDBHandler() {
+        this.emf = Persistence.createEntityManagerFactory("conference_persistence");
+    }
 
+    // Δημιουργία Paper
+    public ResponseMessage createPaper(Paper paper) {
+        ResponseMessage response = new ResponseMessage();
+        EntityManager em = emf.createEntityManager();
         try {
-            transaction = entityManager.getTransaction();
-            transaction.begin();
+            em.getTransaction().begin();
 
-            if (isPaperTitleUnique(conferenceName, title, entityManager)) {
-                Conference conference = getConferenceByName(conferenceName, entityManager);
-
-                if (conference != null) {
-                    User creator = entityManager.createQuery("SELECT u FROM User u WHERE u.username = :username", User.class)
-                            .setParameter("username", creatorUsername)
-                            .getSingleResult();
-
-                    if (creator != null) {
-                        Paper newPaper = new Paper();
-                        newPaper.setTitle(title);
-                        newPaper.setAuthorNames(creator.getName());
-                        newPaper.setContent(null);
-                        newPaper.setCreationDate(new Date());
-                        newPaper.setCreator(creator);  // Replace u_id with actual User reference
-                        newPaper.setConference(conference);  // Replace conf_id with actual Conference reference
-                        newPaper.setPaperState("CREATED");
-
-                        entityManager.persist(newPaper);
-                        transaction.commit();
-                        return true;
-                    } else {
-                        System.out.println("Creator not found!");
-                    }
-                } else {
-                    System.out.println("Conference not found!");
-                }
-            } else {
-                System.out.println("Paper title is not unique within the conference!");
+            TypedQuery<Long> query = em.createQuery("SELECT COUNT(p) FROM Paper p WHERE p.title = :title", Long.class);
+            query.setParameter("title", paper.getTitle());
+            Long count = query.getSingleResult();
+            if (count > 0) {
+                response.setMessage("Paper with this title already exists.");
+                response.setSuccess(false);
+                return response;
             }
+
+            em.persist(paper);
+            em.getTransaction().commit();
+            response.setMessage("Paper created successfully.");
+            response.setSuccess(true);
         } catch (Exception e) {
-            if (transaction != null && transaction.isActive()) {
-                transaction.rollback();  // Rollback transaction on failure
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
             }
-            e.printStackTrace();
+            response.setMessage("Error creating paper: " + e.getMessage());
+            response.setSuccess(false);
         } finally {
-            entityManager.close();  // Always close EntityManager
+            em.close();
         }
-        return false;
+        return response;
     }
 
-    private static boolean isPaperTitleUnique(String conferenceName, String paperTitle, EntityManager entityManager) {
-        Conference conference = getConferenceByName(conferenceName, entityManager);
-        if (conference != null) {
-            String query = "SELECT COUNT(p) FROM Paper p WHERE p.conference = :conference AND p.title = :paperTitle";
-            Long count = entityManager.createQuery(query, Long.class)
-                    .setParameter("conference", conference)
-                    .setParameter("paperTitle", paperTitle)
-                    .getSingleResult();
+    // Ενημέρωση Paper
+    public ResponseMessage updatePaper(Paper paper) {
+        ResponseMessage response = new ResponseMessage();
+        EntityManager em = emf.createEntityManager();
+        try {
+            em.getTransaction().begin();
+            Paper existingPaper = em.find(Paper.class, paper.getId());
+            if (existingPaper == null) {
+                response.setMessage("Paper not found.");
+                response.setSuccess(false);
+                return response;
+            }
+            existingPaper.setTitle(paper.getTitle());
+            existingPaper.setAbstractText(paper.getAbstractText());
+            existingPaper.setContent(paper.getContent());
 
-            return count == 0;
+            em.getTransaction().commit();
+            response.setMessage("Paper updated successfully.");
+            response.setSuccess(true);
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            response.setMessage("Error updating paper: " + e.getMessage());
+            response.setSuccess(false);
+        } finally {
+            em.close();
         }
-        return false;
+        return response;
     }
 
-    private static Conference getConferenceByName(String conferenceName, EntityManager entityManager) {
-        String query = "SELECT c FROM Conference c WHERE c.name = :name";
-        return entityManager.createQuery(query, Conference.class)
-                .setParameter("name", conferenceName)
-                .getSingleResult();
+    // Υποβολή Paper (αλλαγή κατάστασης σε "SUBMITTED")
+    public ResponseMessage submitPaper(Long paperId) {
+        ResponseMessage response = new ResponseMessage();
+        EntityManager em = emf.createEntityManager();
+        try {
+            em.getTransaction().begin();
+            Paper paper = em.find(Paper.class, paperId);
+            if (paper == null) {
+                response.setMessage("Paper not found.");
+                response.setSuccess(false);
+                return response;
+            }
+            paper.setState("SUBMITTED");
+            em.getTransaction().commit();
+            response.setMessage("Paper submitted successfully.");
+            response.setSuccess(true);
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            response.setMessage("Error submitting paper: " + e.getMessage());
+            response.setSuccess(false);
+        } finally {
+            em.close();
+        }
+        return response;
+    }
+
+    // Ανάθεση κριτή σε Paper
+    public ResponseMessage assignReviewer(Long paperId, User reviewer) {
+        ResponseMessage response = new ResponseMessage();
+        EntityManager em = emf.createEntityManager();
+        try {
+            em.getTransaction().begin();
+            Paper paper = em.find(Paper.class, paperId);
+            if (paper == null) {
+                response.setMessage("Paper not found.");
+                response.setSuccess(false);
+                return response;
+            }
+
+            Review review = new Review();
+            review.setReviewer(reviewer);
+            review.setScore(0);
+            review.setJustification("");
+
+            paper.getReviews().add(review);
+            em.getTransaction().commit();
+            response.setMessage("Reviewer assigned successfully.");
+            response.setSuccess(true);
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            response.setMessage("Error assigning reviewer: " + e.getMessage());
+            response.setSuccess(false);
+        } finally {
+            em.close();
+        }
+        return response;
     }
 }

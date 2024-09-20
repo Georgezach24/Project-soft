@@ -1,30 +1,74 @@
 package gr.conference.papersys;
 
+import gr.conference.usersys.User;
+import gr.conference.usersys.UserDBHandler;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import com.google.gson.Gson;
 
-@Path("/paper")
+@Path("/papers")
 public class WebResource {
 
-	@POST
-	@Path("/create")
-	@Consumes("application/json")
-	@Produces("application/json")
-	public Response paperCreate(PaperRequest request) {
-	    ResponseMessage msg = new ResponseMessage();
-	    boolean success = PaperDBHandler.createPaper(request.getConferenceName(), request.getUsername(), request.getTitle());
+    private PaperDBHandler dbHandler = new PaperDBHandler();
+    private UserDBHandler userDBHandler = new UserDBHandler();
 
-	    if (success) {
-	        msg.setResponseCode("200");
-	        msg.setResponseMessage("Paper created successfully");
-	        return Response.status(Response.Status.CREATED).entity(new Gson().toJson(msg)).build();
-	    } else {
-	        msg.setResponseCode("400");
-	        msg.setResponseMessage("Error creating Paper");
-	        return Response.status(Response.Status.BAD_REQUEST).entity(new Gson().toJson(msg)).build();
-	    }
-	}
+    // Create Paper
+    @POST
+    @Path("/create")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response createPaper(Paper paper) {
+        ResponseMessage response = dbHandler.createPaper(paper);
+        if (response.isSuccess()) {
+            return Response.status(Response.Status.CREATED).entity(response).build();
+        } else {
+            return Response.status(Response.Status.BAD_REQUEST).entity(response).build();
+        }
+    }
 
+    // Update Paper
+    @PUT
+    @Path("/update")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updatePaper(Paper paper) {
+        ResponseMessage response = dbHandler.updatePaper(paper);
+        if (response.isSuccess()) {
+            return Response.ok(response).build();
+        } else {
+            return Response.status(Response.Status.BAD_REQUEST).entity(response).build();
+        }
+    }
 
+    // Submit Paper
+    @POST
+    @Path("/submit/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response submitPaper(@PathParam("id") Long paperId) {
+        ResponseMessage response = dbHandler.submitPaper(paperId);
+        if (response.isSuccess()) {
+            return Response.ok(response).build();
+        } else {
+            return Response.status(Response.Status.BAD_REQUEST).entity(response).build();
+        }
+    }
+
+    // Assign Reviewer
+    @POST
+    @Path("/assignReviewer/{paperId}/{userId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response assignReviewer(@PathParam("paperId") Long paperId, @PathParam("userId") Long userId) {
+        User reviewer = userDBHandler.findUserById(userId);
+        if (reviewer == null) {
+            return Response.status(Response.Status.NOT_FOUND).entity(new ResponseMessage("User not found", false)).build();
+        }
+        ResponseMessage response = dbHandler.assignReviewer(paperId, reviewer);
+        if (response.isSuccess()) {
+            return Response.ok(response).build();
+        } else {
+            return Response.status(Response.Status.BAD_REQUEST).entity(response).build();
+        }
+    }
+
+    // Other endpoints for review, approval, etc.
 }
