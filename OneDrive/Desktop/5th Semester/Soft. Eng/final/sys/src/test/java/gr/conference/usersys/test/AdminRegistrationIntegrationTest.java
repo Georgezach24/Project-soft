@@ -60,7 +60,6 @@ public class AdminRegistrationIntegrationTest {
     })
     @DisplayName("Administrator Registration Parameterized Test")
     public void testIsAdminRegistered(String username, String role, boolean expected) {
-        // Create a new user
         User user = new User();
         user.setUsername(username);
         user.setRole(role);
@@ -68,10 +67,8 @@ public class AdminRegistrationIntegrationTest {
         em.persist(user);
         em.getTransaction().commit();
 
-        // Check if the user is registered as an admin
         boolean isAdminRegistered = UserDBHandler.isAdminRegistered(username);
 
-        // Assert based on the expected result
         if (expected) {
             assertTrue(isAdminRegistered, "Admin should be registered");
         } else {

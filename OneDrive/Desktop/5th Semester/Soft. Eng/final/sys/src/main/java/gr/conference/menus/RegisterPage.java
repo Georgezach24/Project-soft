@@ -1,57 +1,90 @@
-
 package gr.conference.menus;
 
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import gr.conference.confsys.*;
+
+import gr.conference.usersys.RestClient;
 
 public class RegisterPage {
 
-    public RegisterPage(String username) {
-        loadPage(username);
+    private JFrame frame;
+    private JTextField usernameField;
+    private JPasswordField passwordField;
+    private JPasswordField confirmPasswordField;
+    private JTextField emailField;
+    private JTextField phoneField;
+
+    public RegisterPage() {
+        initialize();
     }
 
-    public void loadPage(String username) {
-        // Create the JFrame for the unified input
-        JFrame frame = new JFrame("RegisterPage Input");
+    private void initialize() {
+        frame = new JFrame("Register");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(400, 300);
-        frame.setLayout(new GridLayout(4, 2));  // Adjust size as necessary
+        frame.setSize(400, 400);
+        frame.setLayout(new BorderLayout());
 
-        // Add labels and text fields
-        JLabel inputLabel1 = new JLabel("Input 1: ");
-        JTextField inputField1 = new JTextField(20);
-        JLabel inputLabel2 = new JLabel("Input 2: ");
-        JTextField inputField2 = new JTextField(20);
+        JPanel registerPanel = new JPanel();
+        registerPanel.setLayout(new GridLayout(6, 2));
 
-        // Create the submit button
-        JButton submitButton = new JButton("Submit");
+        JLabel usernameLabel = new JLabel("Username:");
+        usernameField = new JTextField();
 
-        // Add components to the frame
-        frame.add(inputLabel1);
-        frame.add(inputField1);
-        frame.add(inputLabel2);
-        frame.add(inputField2);
-        frame.add(new JLabel());  // Empty cell in grid
-        frame.add(submitButton);
+        JLabel passwordLabel = new JLabel("Password:");
+        passwordField = new JPasswordField();
 
-        // Button action to handle submission
-        submitButton.addActionListener(new ActionListener() {
+        JLabel confirmPasswordLabel = new JLabel("Confirm Password:");
+        confirmPasswordField = new JPasswordField();
+
+        JLabel emailLabel = new JLabel("Email:");
+        emailField = new JTextField();
+
+        JLabel phoneLabel = new JLabel("Phone:");
+        phoneField = new JTextField();
+
+        registerPanel.add(usernameLabel);
+        registerPanel.add(usernameField);
+        registerPanel.add(passwordLabel);
+        registerPanel.add(passwordField);
+        registerPanel.add(confirmPasswordLabel);
+        registerPanel.add(confirmPasswordField);
+        registerPanel.add(emailLabel);
+        registerPanel.add(emailField);
+        registerPanel.add(phoneLabel);
+        registerPanel.add(phoneField);
+
+        JButton registerButton = new JButton("Register");
+        registerButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String input1 = inputField1.getText();
-                String input2 = inputField2.getText();
-
-                if (input1.isEmpty() || input2.isEmpty()) {
-                    JOptionPane.showMessageDialog(frame, "Please fill in both fields.", "Error", JOptionPane.ERROR_MESSAGE);
-                } else {
-                    // Here you can handle the input and call other methods based on the logic needed
-                    frame.dispose();  // Close the frame
-                }
+                registerUser();
             }
         });
 
-        // Make the frame visible
+        frame.add(registerPanel, BorderLayout.CENTER);
+        frame.add(registerButton, BorderLayout.SOUTH);
+
         frame.setVisible(true);
+    }
+
+    private void registerUser() {
+        String username = usernameField.getText();
+        String password = new String(passwordField.getPassword());
+        String confirmPassword = new String(confirmPasswordField.getPassword());
+        String email = emailField.getText();
+        String phone = phoneField.getText();
+
+        if (!password.equals(confirmPassword)) {
+            JOptionPane.showMessageDialog(frame, "Passwords do not match!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        RestClient.registerRequest();
+        RestClient.registerPost(username, password, confirmPassword, email, phone);
+
+        JOptionPane.showMessageDialog(frame, "Registration successful!");
+        
+        frame.dispose();
+        new StartingScreen();
     }
 }

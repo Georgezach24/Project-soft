@@ -1,57 +1,91 @@
-
 package gr.conference.menus;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.List;
 import javax.swing.*;
-import gr.conference.confsys.*;
+
+import gr.conference.confsys.Conference;
+import gr.conference.confsys.RestClient;
 
 public class ConferenceSearchPage {
 
+    private JFrame frame;
+    private JTextField nameField;
+    private JTextField descField;
+    private JTextArea resultArea;
+
     public ConferenceSearchPage(String username) {
-        loadPage(username);
+        initialize(username);
     }
 
-    public void loadPage(String username) {
-        // Create the JFrame for the unified input
-        JFrame frame = new JFrame("ConferenceSearchPage Input");
+    private void initialize(String username) {
+        frame = new JFrame("Search Conference");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(400, 300);
-        frame.setLayout(new GridLayout(4, 2));  // Adjust size as necessary
+        frame.setSize(500, 400);
+        frame.setLayout(new BorderLayout());
 
-        // Add labels and text fields
-        JLabel inputLabel1 = new JLabel("Input 1: ");
-        JTextField inputField1 = new JTextField(20);
-        JLabel inputLabel2 = new JLabel("Input 2: ");
-        JTextField inputField2 = new JTextField(20);
+        JPanel searchPanel = new JPanel();
+        searchPanel.setLayout(new GridLayout(4, 2));
 
-        // Create the submit button
-        JButton submitButton = new JButton("Submit");
+        JLabel nameLabel = new JLabel("Conference Name: ");
+        nameField = new JTextField();
 
-        // Add components to the frame
-        frame.add(inputLabel1);
-        frame.add(inputField1);
-        frame.add(inputLabel2);
-        frame.add(inputField2);
-        frame.add(new JLabel());  // Empty cell in grid
-        frame.add(submitButton);
+        JLabel descLabel = new JLabel("Conference Description: ");
+        descField = new JTextField();
 
-        // Button action to handle submission
-        submitButton.addActionListener(new ActionListener() {
+        searchPanel.add(nameLabel);
+        searchPanel.add(nameField);
+        searchPanel.add(descLabel);
+        searchPanel.add(descField);
+
+        JButton searchButton = new JButton("Search");
+        searchButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String input1 = inputField1.getText();
-                String input2 = inputField2.getText();
-
-                if (input1.isEmpty() || input2.isEmpty()) {
-                    JOptionPane.showMessageDialog(frame, "Please fill in both fields.", "Error", JOptionPane.ERROR_MESSAGE);
-                } else {
-                    // Here you can handle the input and call other methods based on the logic needed
-                    frame.dispose();  // Close the frame
-                }
+                searchConferences(username);
             }
         });
 
-        // Make the frame visible
+        searchPanel.add(new JLabel()); // Κενό για ευθυγράμμιση
+        searchPanel.add(searchButton);
+
+        resultArea = new JTextArea();
+        resultArea.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(resultArea);
+
+        frame.add(searchPanel, BorderLayout.NORTH);
+        frame.add(scrollPane, BorderLayout.CENTER);
+
+        JButton backButton = new JButton("Back");
+        backButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                frame.dispose(); // Κλείσιμο παραθύρου
+                new UserPage(username); // Επιστροφή στη σελίδα χρήστη
+            }
+        });
+
+        frame.add(backButton, BorderLayout.SOUTH);
+
         frame.setVisible(true);
+    }
+
+    private void searchConferences(String username) {
+        String name = nameField.getText();
+        String desc = descField.getText();
+
+        RestClient.confSearchRequest();
+        List<Conference> searchResults = RestClient.confSearchPost(name, desc);
+
+        if (!searchResults.isEmpty()) {
+            StringBuilder resultText = new StringBuilder("Search Results:\n");
+            for (Conference conf : searchResults) {
+                resultText.append("Name: ").append(conf.getName()).append("\n");
+                resultText.append("Description: ").append(conf.getDesc()).append("\n");
+                resultText.append("Date: ").append(conf.getDate()).append("\n\n");
+            }
+            resultArea.setText(resultText.toString());
+        } else {
+            resultArea.setText("No conferences found.");
+        }
     }
 }

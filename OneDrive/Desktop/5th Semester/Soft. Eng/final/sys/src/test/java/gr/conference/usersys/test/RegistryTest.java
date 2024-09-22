@@ -17,19 +17,16 @@ public class RegistryTest {
 
     @BeforeAll
     public static void setupAll() {
-        // Δημιουργούμε το EntityManagerFactory για να συνδεθούμε με τη βάση δεδομένων
         emf = Persistence.createEntityManagerFactory("sys");
     }
 
     @BeforeEach
     public void setup() {
-        // Δημιουργούμε το EntityManager πριν από κάθε τεστ
         em = emf.createEntityManager();
     }
 
     @AfterEach
     public void teardown() {
-        // Κλείνουμε το EntityManager μετά από κάθε τεστ
         if (em != null && em.isOpen()) {
             em.close();
         }
@@ -37,7 +34,6 @@ public class RegistryTest {
 
     @AfterAll
     public static void teardownAll() {
-        // Κλείνουμε το EntityManagerFactory μετά την ολοκλήρωση όλων των τεστ
         if (emf != null && emf.isOpen()) {
             emf.close();
         }
@@ -67,7 +63,6 @@ public class RegistryTest {
 
     @AfterEach
     public void cleanUpTestData() {
-        // Δημιουργία νέου EntityManager για τη διαγραφή δεδομένων
         EntityManager cleanupEm = emf.createEntityManager();
         cleanupEm.getTransaction().begin();
         try {

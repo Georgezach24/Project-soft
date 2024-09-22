@@ -11,7 +11,6 @@ import org.apache.http.impl.client.HttpClients;
 
 public class RestClient {
 
-    // Handle login request
     public static String loginPost(String username, String password) {
         HttpClient client = HttpClients.createDefault();
         StringBuilder result = new StringBuilder();
@@ -28,7 +27,6 @@ public class RestClient {
         return result.toString();
     }
 
-    // Handle register POST request (actual registration)
     public static String registerPost(String username, String password, String passwordConf, String email, String phone) {
         HttpClient client = HttpClients.createDefault();
         StringBuilder result = new StringBuilder();
@@ -45,7 +43,6 @@ public class RestClient {
         return result.toString();
     }
 
-    // Handle GET request before registration
     public static void registerRequest() {
         HttpClient client = HttpClients.createDefault();
         HttpGet request = new HttpGet("http://localhost:8080/system/webapi/usermng/register");
@@ -59,7 +56,6 @@ public class RestClient {
         }
     }
 
-    // Handle information update POST request
     public static String updatePost(String currentUsername, String newUsername, String name, String surname, String email, String phone) {
         HttpClient client = HttpClients.createDefault();
         StringBuilder result = new StringBuilder();
@@ -76,7 +72,6 @@ public class RestClient {
         return result.toString();
     }
 
-    // Handle password update POST request
     public static String passwordUpdatePost(String username, String oldPassword, String newPassword) {
         HttpClient client = HttpClients.createDefault();
         StringBuilder result = new StringBuilder();
@@ -93,7 +88,6 @@ public class RestClient {
         return result.toString();
     }
 
-    // Handle user status update POST request
     public static String updateStatusPost(String username, String status) {
         HttpClient client = HttpClients.createDefault();
         StringBuilder result = new StringBuilder();
@@ -110,7 +104,6 @@ public class RestClient {
         return result.toString();
     }
 
-    // Handle account deletion POST request
     public static String deletePost(String username) {
         HttpClient client = HttpClients.createDefault();
         StringBuilder result = new StringBuilder();
@@ -127,7 +120,6 @@ public class RestClient {
         return result.toString();
     }
 
-    // General method to handle GET request for updating user info
     public static void updateRequest() {
         HttpClient client = HttpClients.createDefault();
         HttpGet request = new HttpGet("http://localhost:8080/system/webapi/usermng/update");
@@ -141,7 +133,6 @@ public class RestClient {
         }
     }
 
-    // General method to handle GET request for password update
     public static void passwordUpdateRequest() {
         HttpClient client = HttpClients.createDefault();
         HttpGet request = new HttpGet("http://localhost:8080/system/webapi/usermng/passwordupdate");
@@ -155,7 +146,6 @@ public class RestClient {
         }
     }
 
-    // General method to handle GET request for deleting user account
     public static void deleteRequest() {
         HttpClient client = HttpClients.createDefault();
         HttpGet request = new HttpGet("http://localhost:8080/system/webapi/usermng/delete");
@@ -169,7 +159,6 @@ public class RestClient {
         }
     }
 
-    // General method to handle GET request for updating user status
     public static void updateStatusRequest() {
         HttpClient client = HttpClients.createDefault();
         HttpGet request = new HttpGet("http://localhost:8080/system/webapi/usermng/updatestatus");
@@ -183,7 +172,6 @@ public class RestClient {
         }
     }
 
-    // Method to handle the response from the server
     private static String handleResponse(HttpResponse response) throws IOException {
         int statusCode = response.getStatusLine().getStatusCode();
         BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
@@ -197,11 +185,9 @@ public class RestClient {
         reader.close(); // Close the reader to prevent memory leaks
 
         if (statusCode >= 200 && statusCode < 300) {
-            // Request was successful (status code 2xx)
             System.out.println("Response: " + result.toString());
             return result.toString();
         } else {
-            // Request failed (status code 4xx or 5xx)
             System.err.println("Request failed with status code: " + statusCode);
             return null;
         }

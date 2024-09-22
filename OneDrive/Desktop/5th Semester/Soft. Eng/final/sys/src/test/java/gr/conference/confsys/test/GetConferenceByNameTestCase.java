@@ -56,7 +56,6 @@ public class GetConferenceByNameTestCase {
         try (EntityManager em = entityManagerFactory.createEntityManager()) {
             Conference result = ConferenceDBHandler.getConferenceByName(em, conferenceName);
 
-            // Assert the result
             assertNotNull(result);
             assertEquals(conferenceName, result.getName());
             assertEquals(description, result.getDesc());

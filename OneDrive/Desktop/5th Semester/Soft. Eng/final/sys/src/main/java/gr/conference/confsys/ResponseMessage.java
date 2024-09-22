@@ -1,9 +1,5 @@
 package gr.conference.confsys;
 
-/**
-*
-* @author Giorgos Zachos
-*/
 public class ResponseMessage {
 	private String responseMessage;
 	private String responseCode;

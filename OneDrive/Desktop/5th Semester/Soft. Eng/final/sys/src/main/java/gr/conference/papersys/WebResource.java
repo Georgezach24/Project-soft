@@ -12,7 +12,6 @@ public class WebResource {
     private PaperDBHandler dbHandler = new PaperDBHandler();
     private UserDBHandler userDBHandler = new UserDBHandler();
 
-    // Create Paper
     @POST
     @Path("/create")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -26,7 +25,6 @@ public class WebResource {
         }
     }
 
-    // Update Paper
     @PUT
     @Path("/update")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -40,7 +38,6 @@ public class WebResource {
         }
     }
 
-    // Submit Paper
     @POST
     @Path("/submit/{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -53,7 +50,6 @@ public class WebResource {
         }
     }
 
-    // Assign Reviewer
     @POST
     @Path("/assignReviewer/{paperId}/{userId}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -70,5 +66,4 @@ public class WebResource {
         }
     }
 
-    // Other endpoints for review, approval, etc.
 }

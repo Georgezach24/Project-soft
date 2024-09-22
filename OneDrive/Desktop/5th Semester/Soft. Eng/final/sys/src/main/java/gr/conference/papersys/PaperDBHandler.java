@@ -13,7 +13,6 @@ public class PaperDBHandler {
         this.emf = Persistence.createEntityManagerFactory("conference_persistence");
     }
 
-    // Δημιουργία Paper
     public ResponseMessage createPaper(Paper paper) {
         ResponseMessage response = new ResponseMessage();
         EntityManager em = emf.createEntityManager();
@@ -45,7 +44,6 @@ public class PaperDBHandler {
         return response;
     }
 
-    // Ενημέρωση Paper
     public ResponseMessage updatePaper(Paper paper) {
         ResponseMessage response = new ResponseMessage();
         EntityManager em = emf.createEntityManager();
@@ -76,7 +74,6 @@ public class PaperDBHandler {
         return response;
     }
 
-    // Υποβολή Paper (αλλαγή κατάστασης σε "SUBMITTED")
     public ResponseMessage submitPaper(Long paperId) {
         ResponseMessage response = new ResponseMessage();
         EntityManager em = emf.createEntityManager();
@@ -104,7 +101,6 @@ public class PaperDBHandler {
         return response;
     }
 
-    // Ανάθεση κριτή σε Paper
     public ResponseMessage assignReviewer(Long paperId, User reviewer) {
         ResponseMessage response = new ResponseMessage();
         EntityManager em = emf.createEntityManager();

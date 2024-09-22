@@ -25,7 +25,6 @@ public class SearchConferenceTestCase {
         entityManagerFactory = Persistence.createEntityManagerFactory("sys");
         UserDBHandler.registerUser("existingUser1", "StrongP@ss1", "StrongP@ss1", "test@example.com", "123456789");
 
-        // Create conferences for testing
         ConferenceDBHandler.createConference("testconf", "existingUser1", "description1");
         ConferenceDBHandler.createConference("techsummit", "existingUser1", "A tech summit");
         ConferenceDBHandler.createConference("devconf", "existingUser1", "Developer conference");

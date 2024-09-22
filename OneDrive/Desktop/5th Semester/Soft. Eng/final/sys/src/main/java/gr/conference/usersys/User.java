@@ -1,9 +1,5 @@
 package gr.conference.usersys;
 
-/**
-*
-* @author Giorgos Zachos
-*/
 
 
 import jakarta.persistence.*;

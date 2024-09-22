@@ -25,10 +25,8 @@ public class RestClient {
     }
 
     public static void confUpdateRequest() {
-        // Update logic
     }
 
     public static void confUpdatePost(String confName, String newName, String desc) {
-        // Post logic
     }
 }

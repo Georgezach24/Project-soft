@@ -15,19 +15,16 @@ public class UserDBHandler {
     public static EntityManagerFactory ENTITY_MANAGER_FACTORY = Persistence.createEntityManagerFactory("sys");
     public static int loginTries = 3;
 
-    // Method to validate password format
     public static boolean isPasswordValid(String password) {
         String passwordPattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!*@#$%^&+=]).{8,}$";
         return password.matches(passwordPattern);
     }
 
-    // Method to validate username format
     public static boolean isUsernameValid(String username) {
         String usernamePattern = "^[a-zA-Z][a-zA-Z0-9_]{4,}$";
         return username.matches(usernamePattern);
     }
 
-    // Unified login method that checks user role (either "ADMIN" or "USER")
     public static String loginUser(String username, String password) {
         EntityManager em = ENTITY_MANAGER_FACTORY.createEntityManager();
         TypedQuery<User> query = em.createQuery("SELECT u FROM User u WHERE u.username = :username", User.class);
@@ -35,9 +32,7 @@ public class UserDBHandler {
 
         try {
             User user = query.getSingleResult();
-            // Compare hashed input password with stored hashed password
             if (user.getPassword().equals(hashPassword(password))) {
-                // Return the role of the user (either "ADMIN" or "USER")
                 return user.getRole();
             } else {
                 return null; // Incorrect password
@@ -49,7 +44,6 @@ public class UserDBHandler {
         }
     }
 
-    // Register admin with hashed password
     public static void registerAdmin() {
         EntityManager em = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction et = em.getTransaction();
@@ -92,7 +86,6 @@ public class UserDBHandler {
         }
     }
 
-    // Register new user with hashed password
     public static boolean registerUser(String username, String password, String password2, String email, String phone) {
         EntityManager em = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction et = em.getTransaction();
@@ -135,20 +128,17 @@ public class UserDBHandler {
         return false;
     }
 
-    // Update user information
     public static boolean updateUserInfo(String oldUsername, String newUsername, String newName, String newSurname, String newEmail, String newPhone) {
         EntityManager em = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction et = em.getTransaction();
         try {
             et.begin();
 
-            // Fetch user by the old username
             String query = "SELECT u FROM User u WHERE u.username = :username";
             TypedQuery<User> getUserQuery = em.createQuery(query, User.class);
             getUserQuery.setParameter("username", oldUsername);
             User userToUpdate = getUserQuery.getSingleResult();
 
-            // Update user information
             if (newUsername != null && !newUsername.isBlank() && isUsernameValid(newUsername)) {
                 userToUpdate.setUsername(newUsername);
             }
@@ -165,7 +155,6 @@ public class UserDBHandler {
                 userToUpdate.setPhone(newPhone);
             }
 
-            // Merge updated user info back into the database
             em.merge(userToUpdate);
             et.commit();
 
@@ -181,27 +170,22 @@ public class UserDBHandler {
         }
     }
 
-    // Update user password
- // Update user password
     public static boolean updatePassword(String username, String oldPassword, String newPassword) {
         EntityManager em = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction et = em.getTransaction();
         try {
             et.begin();
 
-            // Fetch user by username
             String query = "SELECT u FROM User u WHERE u.username = :username";
             TypedQuery<User> getUserQuery = em.createQuery(query, User.class);
             getUserQuery.setParameter("username", username);
 
             User userToUpdate = getUserQuery.getSingleResult();
 
-            // Hash the old password and compare
             String hashedOldPassword = hashPassword(oldPassword);
             System.out.println("Stored hashed password in DB: " + userToUpdate.getPassword());
             System.out.println("Hashed old password input: " + hashedOldPassword);
 
-            // Check if the old password matches and the new password is valid
             if (userToUpdate.getPassword().equals(hashedOldPassword) && isPasswordValid(newPassword)) {
                 System.out.println("Password update successful. Setting new password.");
                 userToUpdate.setPassword(hashPassword(newPassword)); // Hash the new password before storing
@@ -229,14 +213,12 @@ public class UserDBHandler {
 
 
 
-    // Update user status
     public static boolean updateStatus(String username, String status) {
         EntityManager em = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction et = em.getTransaction();
         try {
             et.begin();
 
-            // Fetch user by username
             String query = "SELECT u FROM User u WHERE u.username = :username";
             TypedQuery<User> getUserQuery = em.createQuery(query, User.class);
             getUserQuery.setParameter("username", username);
@@ -259,14 +241,12 @@ public class UserDBHandler {
         }
     }
 
-    // Delete user by username
     public static boolean deleteUser(String username) {
         EntityManager em = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction et = em.getTransaction();
         try {
             et.begin();
 
-            // Fetch user by username
             String query = "SELECT u FROM User u WHERE u.username = :username";
             TypedQuery<User> getUserQuery = em.createQuery(query, User.class);
             getUserQuery.setParameter("username", username);
@@ -286,7 +266,6 @@ public class UserDBHandler {
         }
     }
 
-    // Utility method to hash the password using SHA-256
     public static String hashPassword(String password) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
@@ -309,7 +288,6 @@ public class UserDBHandler {
         EntityManager em = ENTITY_MANAGER_FACTORY.createEntityManager();
         User user = null;
         try {
-            // Find the user by ID using JPA's find method
             user = em.find(User.class, userId);
         } catch (Exception e) {
             e.printStackTrace(); // Handle any exceptions if necessary

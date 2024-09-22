@@ -22,10 +22,8 @@ public class deleteUserTestCase {
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
 
-        // Διαγραφή των χρηστών αν υπάρχουν ήδη στη βάση δεδομένων
         em.createQuery("DELETE FROM User u WHERE u.username IN ('userToDelete', 'adminToDelete')").executeUpdate();
 
-        // Εισαγωγή δεδομένων για τη δοκιμή
         User user1 = new User();
         user1.setUsername("userToDelete");
         user1.setPassword("password1");
@@ -47,7 +45,6 @@ public class deleteUserTestCase {
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
 
-        // Διαγραφή των χρηστών μετά από κάθε δοκιμή
         em.createQuery("DELETE FROM User u WHERE u.username IN ('userToDelete', 'adminToDelete')").executeUpdate();
         em.getTransaction().commit();
         em.close();
@@ -61,7 +58,6 @@ public class deleteUserTestCase {
         "invalidUser, false"    // Another non-existing user
     })
     public void testDeleteUser(String username, boolean expectedResult) {
-        // Test the deleteUser method with different usernames
         boolean result = UserDBHandler.deleteUser(username);
         assertEquals(expectedResult, result);
     }

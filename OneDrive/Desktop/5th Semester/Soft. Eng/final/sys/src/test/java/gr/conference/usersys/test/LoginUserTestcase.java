@@ -22,7 +22,6 @@ class LoginUserTestcase {
         UserDBHandler.ENTITY_MANAGER_FACTORY = Persistence.createEntityManagerFactory("sys");
         entityManager.getTransaction().begin();
         
-        // Register test users
         UserDBHandler.registerUser("User0002", "User02@!", "User02@!", "test@example.com", "123456789");  // Regular user
         UserDBHandler.registerAdmin(); // Register the admin with "ADMIN" role
     }
@@ -35,7 +34,6 @@ class LoginUserTestcase {
 
         entityManager.getTransaction().begin();
 
-        // Clean up users created for the test
         entityManager.createQuery("DELETE FROM User u WHERE u.username = 'User0002'").executeUpdate();
         entityManager.createQuery("DELETE FROM User u WHERE u.username = 'admin'").executeUpdate();
 
@@ -55,7 +53,6 @@ class LoginUserTestcase {
         "'', '', USER, false",  // Empty username and password
     })
     public void testLogin(String username, String password, String expectedRole, boolean expectedResult) {
-        // Test the login functionality with multiple scenarios
         String result = UserDBHandler.loginUser(username, password);
         
         if (expectedResult) {
@@ -68,7 +65,6 @@ class LoginUserTestcase {
 
     @Test
     public void testLoginWithNullInputs() {
-        // Test login with null values
         String result = UserDBHandler.loginUser(null, null);
         assertNull(result, "Login should fail when username and password are null.");
     }

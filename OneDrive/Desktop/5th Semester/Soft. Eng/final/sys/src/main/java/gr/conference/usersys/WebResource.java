@@ -1,9 +1,5 @@
 package gr.conference.usersys;
 
-/**
- *
- * @author Giorgos Zachos
- */
 import com.google.gson.Gson;
 import jakarta.ws.rs.*;
 
@@ -87,7 +83,6 @@ public class WebResource {
         return new Gson().toJson(msg);
     }
 
-    // Unified login method that checks the role (Admin or User)
     @POST
     @Path("/login/{p1}/{p2}")
     @Produces("application/json")

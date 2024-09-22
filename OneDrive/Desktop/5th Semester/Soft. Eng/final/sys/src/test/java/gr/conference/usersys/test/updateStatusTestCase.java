@@ -20,7 +20,6 @@ class updateStatusTestCase {
 
     @BeforeEach
     public void setUp() {
-        // Δημιουργούμε ένα νέο EntityManagerFactory και EntityManager πριν από κάθε τεστ
         emf = Persistence.createEntityManagerFactory("sys");
         em = emf.createEntityManager();
         em.getTransaction().begin();
@@ -28,13 +27,11 @@ class updateStatusTestCase {
 
     @AfterEach
     public void teardown() {
-        // Έλεγχος αν υπάρχει ενεργή συναλλαγή πριν ξεκινήσουμε νέα
         if (!em.getTransaction().isActive()) {
             em.getTransaction().begin();
         }
 
         try {
-            // Διαγραφή των χρηστών που δημιουργήθηκαν για τα τεστ
             em.createQuery("DELETE FROM User u WHERE u.username = 'userToUpdate1'").executeUpdate();
             em.createQuery("DELETE FROM User u WHERE u.username = 'userToUpdate2'").executeUpdate();
             em.getTransaction().commit();
@@ -44,7 +41,6 @@ class updateStatusTestCase {
             }
             e.printStackTrace();
         } finally {
-            // Κλείνουμε το EntityManager και καθαρίζουμε τους πόρους μετά από κάθε τεστ
             if (em != null && em.isOpen()) {
                 em.close();
             }
@@ -54,7 +50,6 @@ class updateStatusTestCase {
         }
     }
 
-    // Παραμετροποιημένο τεστ για την ενημέρωση της κατάστασης χρήστη
     @ParameterizedTest
     @CsvSource({
         "userToUpdate1, Active, Inactive, true",    // Επιτυχία: ο χρήστης ενημερώνεται με επιτυχία
@@ -62,7 +57,6 @@ class updateStatusTestCase {
         "nonExistingUser, Active, Inactive, false"  // Αποτυχία: ανύπαρκτος χρήστης
     })
     public void testUpdateStatus(String username, String initialStatus, String newStatus, boolean expectedResult) {
-        // Εγγραφή χρήστη μόνο αν δεν είναι ανύπαρκτος
         if (!username.equals("nonExistingUser")) {
             UserDBHandler.registerUser(username, "User02!@", "User02!@", "test@example.com", "123456789");
             UserDBHandler.updateStatus(username, initialStatus);
@@ -70,21 +64,17 @@ class updateStatusTestCase {
             em.clear();  // Καθαρισμός του persistence context
         }
 
-        // Ενημερώνουμε την κατάσταση του χρήστη
         boolean result = UserDBHandler.updateStatus(username, newStatus);
 
-        // Ελέγχουμε αν το αποτέλεσμα ήταν το αναμενόμενο
         assertEquals(expectedResult, result);
 
         if (expectedResult) {
-            // Ελέγχουμε τη νέα κατάσταση του χρήστη μετά την ενημέρωση
             User updatedUser = getUserByUsername(username);
             assertNotNull(updatedUser);
             assertEquals(newStatus, updatedUser.getUser_status());
         }
     }
 
-    // Βοηθητική μέθοδος για να βρούμε χρήστη από το όνομα χρήστη
     private User getUserByUsername(String username) {
         try {
             String query = "SELECT u FROM User u WHERE u.username = :username";

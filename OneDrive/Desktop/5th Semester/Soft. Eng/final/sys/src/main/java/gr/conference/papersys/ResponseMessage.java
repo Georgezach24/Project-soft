@@ -5,7 +5,6 @@ public class ResponseMessage {
     private boolean success;
     private Object data; 
 
-    // Constructors
     public ResponseMessage() {}
 
     public ResponseMessage(String message, boolean success) {
@@ -19,7 +18,6 @@ public class ResponseMessage {
         this.data = data;
     }
 
-    // Getters and Setters
 
     public String getMessage() {
         return message;

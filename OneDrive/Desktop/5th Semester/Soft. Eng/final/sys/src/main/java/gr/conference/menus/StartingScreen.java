@@ -1,57 +1,88 @@
-
 package gr.conference.menus;
 
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import gr.conference.confsys.*;
 
 public class StartingScreen {
 
+    private JFrame frame;
+    private JTextField inputField;
+    private JLabel outputLabel;
+    public String user;
+
     public StartingScreen() {
-        loadPage();
+        loadMenu();
     }
 
-    public void loadPage() {
-        // Create the JFrame for the unified input
-        JFrame frame = new JFrame("StartingScreen Input");
+    private void loadMenu() {
+        frame = new JFrame("Conference System");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(400, 300);
-        frame.setLayout(new GridLayout(4, 2));  // Adjust size as necessary
+        frame.setLayout(new BorderLayout());
 
-        // Add labels and text fields
-        JLabel inputLabel1 = new JLabel("Input 1: ");
-        JTextField inputField1 = new JTextField(20);
-        JLabel inputLabel2 = new JLabel("Input 2: ");
-        JTextField inputField2 = new JTextField(20);
+        JPanel menuPanel = new JPanel();
+        menuPanel.setLayout(new GridLayout(6, 1));
 
-        // Create the submit button
-        JButton submitButton = new JButton("Submit");
+        menuPanel.add(new JLabel("WELCOME TO THE CONFERENCE SYSTEM USER PAGE", JLabel.CENTER));
+        menuPanel.add(new JLabel("1. LOGIN", JLabel.CENTER));
+        menuPanel.add(new JLabel("2. REGISTER", JLabel.CENTER));
+        menuPanel.add(new JLabel("3. CONTINUE AS GUEST", JLabel.CENTER));
+        menuPanel.add(new JLabel("4. EXIT", JLabel.CENTER));
+        outputLabel = new JLabel("", JLabel.CENTER); // Για την έξοδο μηνυμάτων
+        menuPanel.add(outputLabel);
 
-        // Add components to the frame
-        frame.add(inputLabel1);
-        frame.add(inputField1);
-        frame.add(inputLabel2);
-        frame.add(inputField2);
-        frame.add(new JLabel());  // Empty cell in grid
-        frame.add(submitButton);
+        frame.add(menuPanel, BorderLayout.CENTER);
 
-        // Button action to handle submission
-        submitButton.addActionListener(new ActionListener() {
+        inputField = new JTextField();
+        inputField.setHorizontalAlignment(JTextField.CENTER);
+
+        inputField.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String input1 = inputField1.getText();
-                String input2 = inputField2.getText();
-
-                if (input1.isEmpty() || input2.isEmpty()) {
-                    JOptionPane.showMessageDialog(frame, "Please fill in both fields.", "Error", JOptionPane.ERROR_MESSAGE);
-                } else {
-                    // Here you can handle the input and call other methods based on the logic needed
-                    frame.dispose();  // Close the frame
-                }
+                handleUserInput(inputField.getText());
+                inputField.setText(""); // Καθαρισμός του πεδίου μετά την είσοδο
             }
         });
 
-        // Make the frame visible
+        frame.add(inputField, BorderLayout.SOUTH);
+
         frame.setVisible(true);
+    }
+
+    private void handleUserInput(String input) {
+        int choice;
+        try {
+            choice = Integer.parseInt(input);
+        } catch (NumberFormatException e) {
+            outputLabel.setText("Invalid input! Please enter a valid number.");
+            return;
+        }
+
+        LoginPage lp = new LoginPage();
+
+        switch (choice) {
+            case 1:
+                lp.loadPageUser();
+                frame.dispose(); // Κλείσιμο παραθύρου
+                break;
+            case 2:
+                new RegisterPage();
+                frame.dispose(); // Κλείσιμο παραθύρου
+                break;
+            case 3:
+                outputLabel.setText("Continuing as guest...");
+                frame.dispose();
+                break;
+            case 4:
+                System.exit(0);
+                break;
+            default:
+                outputLabel.setText("Invalid option! Please select a valid option.");
+                break;
+        }
+    }
+
+    public String getUser() {
+        return user;
     }
 }

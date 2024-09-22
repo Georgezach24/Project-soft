@@ -25,7 +25,6 @@ class UpdateConferenceTestCase {
         
         UserDBHandler.registerUser("Userconfe", "User02!@", "User02!@", "test@ex.com", "124324235");
 
-        // Δημιουργία αρχικού συνεδρίου για τις δοκιμές
         try {
             boolean conferenceCreated = ConferenceDBHandler.createConference("conference1", "Userconfe", "descripto");
             assertTrue(conferenceCreated, "Conference should be created successfully.");

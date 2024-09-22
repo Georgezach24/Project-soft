@@ -1,57 +1,65 @@
-
 package gr.conference.menus;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import gr.conference.confsys.*;
+import gr.conference.papersys.PaperDBHandler;
+import gr.conference.papersys.RestClient;
+
+import java.util.Scanner;
+
+import javax.swing.JOptionPane;
 
 public class PaperMenu {
 
-    public PaperMenu(String username) {
-        loadPage(username);
+    public PaperMenu(String username, String confName) {
+        loadPage(username, confName);
     }
 
-    public void loadPage(String username) {
-        // Create the JFrame for the unified input
-        JFrame frame = new JFrame("PaperMenu Input");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(400, 300);
-        frame.setLayout(new GridLayout(4, 2));  // Adjust size as necessary
+    private void loadPage(String username, String confName) {
+        
+        JOptionPane.showMessageDialog(null,(username.toUpperCase() + " you are inside the paper system for conference: " + confName.toUpperCase()));
+        JOptionPane.showMessageDialog(null,("1. Create new Paper"));
+        JOptionPane.showMessageDialog(null,("2. Update Paper"));
+        JOptionPane.showMessageDialog(null,("3. Search Paper"));
+        JOptionPane.showMessageDialog(null,("4. Back"));
+        JOptionPane.showMessageDialog(null,("> "));
+        int input = Integer.parseInt(JOptionPane.showInputDialog(null));
+        JOptionPane.showInputDialog(null); // Consume newline
 
-        // Add labels and text fields
-        JLabel inputLabel1 = new JLabel("Input 1: ");
-        JTextField inputField1 = new JTextField(20);
-        JLabel inputLabel2 = new JLabel("Input 2: ");
-        JTextField inputField2 = new JTextField(20);
+        switch (input) {
+            case 1:
+                createPaper(confName, username);
+                break;
+            case 2:
+                updatePaper(confName, username);
+                break;
+            case 3:
+                searchPaper(confName, username);
+                break;
+            case 4:
+                new ConferencePage(username, confName);
+                break;
+            default:
+                JOptionPane.showMessageDialog(null,("Invalid input, try again."));
+                loadPage(username, confName);
+                break;
+        }
+    }
 
-        // Create the submit button
-        JButton submitButton = new JButton("Submit");
+    private void createPaper(String confName, String username) {
+        
+        JOptionPane.showMessageDialog(null,("Insert Paper title: "));
+        String title = JOptionPane.showInputDialog(null);
+        JOptionPane.showMessageDialog(null,("Insert Paper abstract: "));
+        String abstractText = JOptionPane.showInputDialog(null);
+        JOptionPane.showMessageDialog(null,("Insert Paper content: "));
+        String content = JOptionPane.showInputDialog(null);
 
-        // Add components to the frame
-        frame.add(inputLabel1);
-        frame.add(inputField1);
-        frame.add(inputLabel2);
-        frame.add(inputField2);
-        frame.add(new JLabel());  // Empty cell in grid
-        frame.add(submitButton);
+        String response = RestClient.paperCreatePost(title, username, confName, abstractText, content);
+        JOptionPane.showMessageDialog(null,(response));
+    }
 
-        // Button action to handle submission
-        submitButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                String input1 = inputField1.getText();
-                String input2 = inputField2.getText();
+    private void updatePaper(String confName, String username) {
+    }
 
-                if (input1.isEmpty() || input2.isEmpty()) {
-                    JOptionPane.showMessageDialog(frame, "Please fill in both fields.", "Error", JOptionPane.ERROR_MESSAGE);
-                } else {
-                    // Here you can handle the input and call other methods based on the logic needed
-                    frame.dispose();  // Close the frame
-                }
-            }
-        });
-
-        // Make the frame visible
-        frame.setVisible(true);
+    private void searchPaper(String confName, String username) {
     }
 }

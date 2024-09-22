@@ -24,23 +24,19 @@ class CreateConferenceTestCase {
         ConferenceDBHandler.ENTITY_MANAGER_FACTORY = Persistence.createEntityManagerFactory("sys");
         entityManager.getTransaction().begin();
 
-        // Ensure the creator user exists for testing
         UserDBHandler.registerUser("Userconf", "User00913!!", "User00913!!", "test1@example.com", "123456787");
     }
 
     @AfterEach
     public void tearDown() {
-        // Rollback to avoid conflicts in subsequent tests
         if (entityManager.getTransaction().isActive()) {
             entityManager.getTransaction().rollback();
         }
 
-        // Clean up created conferences after each test
         entityManager.getTransaction().begin();
         entityManager.createQuery("DELETE FROM Conference c WHERE c.name LIKE 'TechConf%'").executeUpdate();
         entityManager.getTransaction().commit();
 
-        // Clean up the test user
         entityManager.getTransaction().begin();
         entityManager.createQuery("DELETE FROM User u WHERE u.username = 'Userconf'").executeUpdate();
         entityManager.getTransaction().commit();
@@ -55,7 +51,6 @@ class CreateConferenceTestCase {
     })
     public void testCreateConference(String conferenceName, String creatorUsername, String description, boolean expectedResult) {
         try {
-            // Log the conference details for debugging purposes
             System.out.println("Attempting to create conference: " + conferenceName);
 
             boolean result = ConferenceDBHandler.createConference(conferenceName, creatorUsername, description);
