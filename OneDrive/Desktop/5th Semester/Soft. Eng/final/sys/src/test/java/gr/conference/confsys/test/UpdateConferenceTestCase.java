@@ -5,7 +5,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import gr.conference.confsys.ConferenceDBHandler;
 import gr.conference.usersys.UserDBHandler;
@@ -20,13 +21,14 @@ class UpdateConferenceTestCase {
     @BeforeEach
     public void setUp() {
         entityManagerFactory = Persistence.createEntityManagerFactory("sys");
-        System.out.println("EntityManagerFactory created: " + entityManagerFactory);
         assertNotNull(entityManagerFactory);
+        
         UserDBHandler.registerUser("Userconfe", "User02!@", "User02!@", "test@ex.com", "124324235");
 
+        // Δημιουργία αρχικού συνεδρίου για τις δοκιμές
         try {
-            boolean test = ConferenceDBHandler.createConference("conference1", "Userconfe", "descripto");
-            assertTrue(test);
+            boolean conferenceCreated = ConferenceDBHandler.createConference("conference1", "Userconfe", "descripto");
+            assertTrue(conferenceCreated, "Conference should be created successfully.");
         } catch (Exception e) {
             e.printStackTrace();
             fail("Conference was not created: " + e.getMessage());
@@ -39,24 +41,28 @@ class UpdateConferenceTestCase {
             entityManagerFactory.close();
         }
     }
-    
-    
 
-    @Test
-    public void testUpdateConference() {
+    @ParameterizedTest
+    @CsvSource({
+        "conference1, NewConferenceName1, NewDescription1, true",  // Ενημέρωση με έγκυρα δεδομένα
+        "conference1, NewConferenceName2, , true",                // Ενημέρωση μόνο ονόματος
+        "conference1, , NewDescription2, true",                   // Ενημέρωση μόνο περιγραφής
+    })
+    public void testUpdateConference(String oldConferenceName, String newName, String newDescription, boolean expectedResult) {
+        boolean result = ConferenceDBHandler.updateConference(oldConferenceName, newName, newDescription);
         
-        boolean result = ConferenceDBHandler.updateConference("conference1", "Userconf", "descuserconf");
- 
-        assertTrue(result);
-
+        if (expectedResult) {
+            assertTrue(result, "Conference should be updated successfully.");
+        } else {
+            assertFalse(result, "Conference update should fail for invalid inputs.");
+        }
     }
-    
-    
+
     @AfterAll
     public static void deleteTestData() {
         EntityManager deleteEntityManager = Persistence.createEntityManagerFactory("sys").createEntityManager();
         deleteEntityManager.getTransaction().begin();
-        deleteEntityManager.createQuery("DELETE FROM Conference c WHERE c.name = 'Userconf'").executeUpdate();
+        deleteEntityManager.createQuery("DELETE FROM Conference c WHERE c.name LIKE 'NewConferenceName%' OR c.name = 'conference1'").executeUpdate();
         deleteEntityManager.getTransaction().commit();
         deleteEntityManager.close();
 

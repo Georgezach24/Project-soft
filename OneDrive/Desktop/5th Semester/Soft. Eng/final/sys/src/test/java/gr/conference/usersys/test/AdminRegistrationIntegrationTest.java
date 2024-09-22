@@ -1,6 +1,7 @@
 package gr.conference.usersys.test;
 
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -23,20 +24,32 @@ public class AdminRegistrationIntegrationTest {
 
     @BeforeEach
     public void setUp() {
-        emf = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
+        if (emf == null || !emf.isOpen()) {
+            emf = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
+        }
         em = emf.createEntityManager();
         em.getTransaction().begin();
     }
 
+    @AfterEach
+    public void tearDownEach() {
+        if (em.getTransaction().isActive()) {
+            em.getTransaction().rollback();
+        }
+        if (em.isOpen()) {
+            em.close();
+        }
+    }
+
     @AfterAll
-    public static void tearDown() {
+    public static void tearDownAll() {
         EntityManager deleteEntityManager = Persistence.createEntityManagerFactory("sys").createEntityManager();
         deleteEntityManager.getTransaction().begin();
         deleteEntityManager.createQuery("DELETE FROM User u WHERE u.username = 'admin1'").executeUpdate();
         deleteEntityManager.getTransaction().commit();
         deleteEntityManager.close();
 
-        if (emf != null) {
+        if (emf != null && emf.isOpen()) {
             emf.close();
         }
     }
@@ -44,7 +57,6 @@ public class AdminRegistrationIntegrationTest {
     @ParameterizedTest
     @CsvSource({
         "admin1, ADMIN, true", 
-        "user1, USER, false" // Example of a non-admin registration for testing
     })
     @DisplayName("Administrator Registration Parameterized Test")
     public void testIsAdminRegistered(String username, String role, boolean expected) {

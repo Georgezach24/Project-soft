@@ -6,7 +6,8 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import gr.conference.confsys.ConferenceDBHandler;
 import gr.conference.usersys.UserDBHandler;
 
@@ -23,47 +24,35 @@ public class IsConferenceNameUniqueTestCase {
     public static void tearDownClass() {
         if (entityManagerFactory != null && entityManagerFactory.isOpen()) {
             entityManagerFactory.close();
-            
+
             EntityManager deleteEntityManager = Persistence.createEntityManagerFactory("sys").createEntityManager();
             deleteEntityManager.getTransaction().begin();
-            deleteEntityManager.createQuery("DELETE FROM Conference c WHERE c.name = 'existingConf'").executeUpdate();
+            deleteEntityManager.createQuery("DELETE FROM Conference c WHERE c.name IN ('existingConf', 'existingConf2', 'testConf123')").executeUpdate();
             deleteEntityManager.getTransaction().commit();
             deleteEntityManager.close();
 
             EntityManager deleteEntityManager2 = Persistence.createEntityManagerFactory("sys").createEntityManager();
             deleteEntityManager2.getTransaction().begin();
-            deleteEntityManager2.createQuery("DELETE FROM User u WHERE u.username = 'existingUser1'").executeUpdate();
+            deleteEntityManager2.createQuery("DELETE FROM User u WHERE u.username IN ('existingUser1', 'existingUser2', 'userTest')").executeUpdate();
             deleteEntityManager2.getTransaction().commit();
             deleteEntityManager2.close();
         }
     }
 
-    @Test
-    public void testIsConferenceNameUnique() {
-        // Test data
-        String existingConferenceName = "existingConf";
-        String newConferenceName = "newConf";
-
-        UserDBHandler.registerUser("existingUser1", "User02!@", "User02!@", "test@ex.com", "1234324345");
-        createTestConference(existingConferenceName, "existingDesc");
-
-       
-        try (EntityManager em = entityManagerFactory.createEntityManager()) {
-            boolean resultExisting = ConferenceDBHandler.isConferenceNameUnique(em, existingConferenceName);
-
-            
-            assertFalse(resultExisting);
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail("Test failed with exception: " + e.getMessage());
-        }
-
+    @ParameterizedTest
+    @CsvSource({
+        "existingConf, existingDesc, false",
+        "existingConf2, anotherDesc, false",
+        "testConf123, testDesc, false"
+    })
+    public void testIsConferenceNameUnique(String conferenceName, String description, boolean expectedResult) {
         
-        try (EntityManager em = entityManagerFactory.createEntityManager()) {
-            boolean resultNew = ConferenceDBHandler.isConferenceNameUnique(em, newConferenceName);
+        UserDBHandler.registerUser("existingUser1", "User02!@", "User02!@", "test@ex.com", "1234324345");
+        createTestConference(conferenceName, description);
 
-           
-            assertTrue(resultNew);
+        try (EntityManager em = entityManagerFactory.createEntityManager()) {
+            boolean result = ConferenceDBHandler.isConferenceNameUnique(em, conferenceName);
+            assertEquals(expectedResult, result);
         } catch (Exception e) {
             e.printStackTrace();
             fail("Test failed with exception: " + e.getMessage());
@@ -71,10 +60,6 @@ public class IsConferenceNameUniqueTestCase {
     }
 
     private void createTestConference(String conferenceName, String description) {
-        
         ConferenceDBHandler.createConference(conferenceName, "existingUser1", description);
     }
-
-    
-
 }

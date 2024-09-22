@@ -23,16 +23,34 @@ class updateStatusTestCase {
         // Δημιουργούμε ένα νέο EntityManagerFactory και EntityManager πριν από κάθε τεστ
         emf = Persistence.createEntityManagerFactory("sys");
         em = emf.createEntityManager();
+        em.getTransaction().begin();
     }
 
     @AfterEach
     public void teardown() {
-        // Κλείνουμε το EntityManager και καθαρίζουμε τους πόρους μετά από κάθε τεστ
-        if (em != null && em.isOpen()) {
-            em.close();
+        // Έλεγχος αν υπάρχει ενεργή συναλλαγή πριν ξεκινήσουμε νέα
+        if (!em.getTransaction().isActive()) {
+            em.getTransaction().begin();
         }
-        if (emf != null && emf.isOpen()) {
-            emf.close();
+
+        try {
+            // Διαγραφή των χρηστών που δημιουργήθηκαν για τα τεστ
+            em.createQuery("DELETE FROM User u WHERE u.username = 'userToUpdate1'").executeUpdate();
+            em.createQuery("DELETE FROM User u WHERE u.username = 'userToUpdate2'").executeUpdate();
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            // Κλείνουμε το EntityManager και καθαρίζουμε τους πόρους μετά από κάθε τεστ
+            if (em != null && em.isOpen()) {
+                em.close();
+            }
+            if (emf != null && emf.isOpen()) {
+                emf.close();
+            }
         }
     }
 
@@ -44,10 +62,8 @@ class updateStatusTestCase {
         "nonExistingUser, Active, Inactive, false"  // Αποτυχία: ανύπαρκτος χρήστης
     })
     public void testUpdateStatus(String username, String initialStatus, String newStatus, boolean expectedResult) {
-        em.getTransaction().begin(); // Έναρξη συναλλαγής
-
+        // Εγγραφή χρήστη μόνο αν δεν είναι ανύπαρκτος
         if (!username.equals("nonExistingUser")) {
-            // Εγγραφή χρήστη μόνο αν δεν είναι ανύπαρκτος
             UserDBHandler.registerUser(username, "User02!@", "User02!@", "test@example.com", "123456789");
             UserDBHandler.updateStatus(username, initialStatus);
             em.flush();  // Διασφάλιση ότι ο χρήστης έχει αποθηκευτεί στη βάση
@@ -56,8 +72,6 @@ class updateStatusTestCase {
 
         // Ενημερώνουμε την κατάσταση του χρήστη
         boolean result = UserDBHandler.updateStatus(username, newStatus);
-        
-        em.getTransaction().commit(); // Κλείσιμο συναλλαγής
 
         // Ελέγχουμε αν το αποτέλεσμα ήταν το αναμενόμενο
         assertEquals(expectedResult, result);
@@ -82,6 +96,4 @@ class updateStatusTestCase {
             return null;
         }
     }
-
-
 }

@@ -20,17 +20,32 @@ class LoginUserTestcase {
     public void setUp() {
         entityManager = Persistence.createEntityManagerFactory("sys").createEntityManager();
         UserDBHandler.ENTITY_MANAGER_FACTORY = Persistence.createEntityManagerFactory("sys");
-        entityManager.getTransaction().begin(); 
+        entityManager.getTransaction().begin();
+        
         // Register test users
         UserDBHandler.registerUser("User0002", "User02@!", "User02@!", "test@example.com", "123456789");  // Regular user
         UserDBHandler.registerAdmin(); // Register the admin with "ADMIN" role
     }
 
-
     @AfterEach
     public void tearDown() {
-        entityManager.getTransaction().rollback();
+        if (entityManager.getTransaction().isActive()) {
+            entityManager.getTransaction().rollback();
+        }
+
+        entityManager.getTransaction().begin();
+
+        // Clean up users created for the test
+        entityManager.createQuery("DELETE FROM User u WHERE u.username = 'User0002'").executeUpdate();
+        entityManager.createQuery("DELETE FROM User u WHERE u.username = 'admin'").executeUpdate();
+
+        entityManager.getTransaction().commit();
+
+        if (entityManager.isOpen()) {
+            entityManager.close();
+        }
     }
+
     @ParameterizedTest
     @CsvSource({
         "admin, admin, ADMIN, true",  // Admin credentials
@@ -50,7 +65,6 @@ class LoginUserTestcase {
             assertNull(result, "Login should fail for incorrect credentials.");
         }
     }
-
 
     @Test
     public void testLoginWithNullInputs() {
