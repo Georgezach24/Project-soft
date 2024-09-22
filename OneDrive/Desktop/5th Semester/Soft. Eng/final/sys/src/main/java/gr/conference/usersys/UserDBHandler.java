@@ -82,7 +82,9 @@ public class UserDBHandler {
             countQuery.setParameter("username", username);
             countQuery.setParameter("role", "ADMIN");
             
-            return  true;
+            long adminCount = countQuery.getSingleResult();  // Get the count of admins
+            
+            return adminCount > 0;  // Return true if an admin exists, false otherwise
         } finally {
             if (em != null && em.isOpen()) {
                 em.close();

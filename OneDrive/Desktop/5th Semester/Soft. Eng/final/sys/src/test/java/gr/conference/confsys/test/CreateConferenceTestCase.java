@@ -1,63 +1,70 @@
 package gr.conference.confsys.test;
 
 import static org.junit.jupiter.api.Assertions.*;
-
-import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import gr.conference.confsys.ConferenceDBHandler;
 import gr.conference.usersys.UserDBHandler;
 
-public class CreateConferenceTestCase {
+class CreateConferenceTestCase {
 
-    private EntityManagerFactory entityManagerFactory;
+    private static EntityManager entityManager;
 
     @BeforeEach
     public void setUp() {
-        entityManagerFactory = Persistence.createEntityManagerFactory("sys");
-        System.out.println("EntityManagerFactory created: " + entityManagerFactory);
-        assertNotNull(entityManagerFactory);
+        entityManager = Persistence.createEntityManagerFactory("sys").createEntityManager();
+        ConferenceDBHandler.ENTITY_MANAGER_FACTORY = Persistence.createEntityManagerFactory("sys");
+        entityManager.getTransaction().begin();
+        
+        // Ensure the creator user exists for testing
         UserDBHandler.registerUser("Userconf", "User00913!!", "User00913!!", "test1@example.com", "123456787");
     }
 
     @AfterEach
     public void tearDown() {
-        if (entityManagerFactory != null && entityManagerFactory.isOpen()) {
-            entityManagerFactory.close();
-        }
+        entityManager.getTransaction().rollback(); // Rollback to avoid conflicts in subsequent tests
     }
-    @AfterAll
-    public static void deleteTestData() {
-        EntityManager deleteEntityManager = Persistence.createEntityManagerFactory("sys").createEntityManager();
-        deleteEntityManager.getTransaction().begin();
-        deleteEntityManager.createQuery("DELETE FROM Conference c WHERE c.name = 'Test Conference1fds'").executeUpdate();
-        deleteEntityManager.getTransaction().commit();
-        deleteEntityManager.close();
 
-        EntityManager deleteEntityManager2 = Persistence.createEntityManagerFactory("sys").createEntityManager();
-        deleteEntityManager2.getTransaction().begin();
-        deleteEntityManager2.createQuery("DELETE FROM User u WHERE u.username = 'Userconf'").executeUpdate();
-        deleteEntityManager2.getTransaction().commit();
-        deleteEntityManager2.close();
+    @ParameterizedTest
+    @CsvSource({
+        "TechConf2024, Userconf, A tech conference about innovation, true",   // Valid conference
+        "TechConf2025, Userconf, Another tech summit, true",                  // Valid conference
+        "TechConf2024, Userconf, Duplicate name, false",                      // Duplicate name
+        "'', Userconf, Empty name, false",                                    // Empty conference name
+        "TechConf2026, '', Missing username, false",                          // Empty creator username
+        "TechConf2027, Userconf, '', false"                                   // Empty description
+    })
+    public void testCreateConference(String conferenceName, String creatorUsername, String description, boolean expectedResult) {
+        try {
+            // Log the conference details for debugging purposes
+            System.out.println("Attempting to create conference: " + conferenceName);
+
+            boolean result = ConferenceDBHandler.createConference(conferenceName, creatorUsername, description);
+
+            if (expectedResult) {
+                assertTrue(result, "Conference should be created successfully.");
+            } else {
+                assertFalse(result, "Conference creation should fail for invalid inputs.");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail("Test failed with exception: " + e.getMessage());
+        }
     }
 
     @Test
-    public void testCreateConference() {
-        // Test data
-        String conferenceName = "Test Conference1fds";
-        String creatorUsername = "Userconf";
-        String desc = "Test conference descriptiosn";
-
-        // Perform the test
+    public void testCreateConferenceWithNullInputs() {
         try {
-            boolean result = ConferenceDBHandler.createConference(conferenceName, creatorUsername, desc);
-            // Assert the result
-            assertTrue(result);
+            boolean result = ConferenceDBHandler.createConference(null, null, null);
+            assertFalse(result, "Conference creation should fail when name, username, and description are null.");
         } catch (Exception e) {
             e.printStackTrace();
             fail("Test failed with exception: " + e.getMessage());
