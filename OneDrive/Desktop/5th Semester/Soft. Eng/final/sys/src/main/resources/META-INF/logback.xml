@@ -1,13 +1,4 @@
 <configuration>
-    <!-- Ρύθμιση επιπέδου logging για το Hibernate -->
-    <logger name="org.hibernate" level="WARN" />
-    <logger name="org.hibernate.SQL" level="WARN" />
-    <logger name="org.hibernate.type" level="WARN" />
-    <logger name="org.hibernate.orm.connections.pooling" level="WARN"/>
-
-    <!-- Ρύθμιση επιπέδου logging για την εφαρμογή -->
-    <logger name="gr.conference" level="DEBUG" />
-
     <!-- Καταγραφή μηνυμάτων στη γραμμή εντολών (console) -->
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
@@ -15,8 +6,8 @@
         </encoder>
     </appender>
 
-    <!-- Ρυθμίσεις για το επίπεδο καταγραφής της ρίζας -->
-    <root level="WARN">
+    <!-- Ρύθμιση επιπέδου logging της ρίζας σε OFF για να απενεργοποιήσεις όλα τα μηνύματα -->
+    <root level="OFF">
         <appender-ref ref="STDOUT" />
     </root>
 </configuration>

@@ -182,30 +182,41 @@ public class UserDBHandler {
     }
 
     // Update user password
+ // Update user password
     public static boolean updatePassword(String username, String oldPassword, String newPassword) {
         EntityManager em = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction et = em.getTransaction();
         try {
             et.begin();
 
-            // Fetch user by username and old password
+            // Fetch user by username
             String query = "SELECT u FROM User u WHERE u.username = :username";
             TypedQuery<User> getUserQuery = em.createQuery(query, User.class);
             getUserQuery.setParameter("username", username);
 
             User userToUpdate = getUserQuery.getSingleResult();
 
-            // Check if the old password matches
-            if (userToUpdate.getPassword().equals(hashPassword(oldPassword)) && isPasswordValid(newPassword)) {
+            // Hash the old password and compare
+            String hashedOldPassword = hashPassword(oldPassword);
+            System.out.println("Stored hashed password in DB: " + userToUpdate.getPassword());
+            System.out.println("Hashed old password input: " + hashedOldPassword);
+
+            // Check if the old password matches and the new password is valid
+            if (userToUpdate.getPassword().equals(hashedOldPassword) && isPasswordValid(newPassword)) {
+                System.out.println("Password update successful. Setting new password.");
                 userToUpdate.setPassword(hashPassword(newPassword)); // Hash the new password before storing
                 em.merge(userToUpdate);
                 et.commit();
                 return true;
             } else {
-                et.rollback();
+                System.out.println("Password update failed. Old password did not match or new password invalid.");
+                if (et.isActive()) {
+                    et.rollback();
+                }
                 return false;
             }
         } catch (NoResultException e) {
+            System.out.println("User not found with username: " + username);
             if (et.isActive()) {
                 et.rollback();
             }
@@ -214,6 +225,9 @@ public class UserDBHandler {
             em.close();
         }
     }
+
+
+
 
     // Update user status
     public static boolean updateStatus(String username, String status) {

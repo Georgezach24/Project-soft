@@ -3,8 +3,8 @@ package gr.conference.usersys.test;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import gr.conference.usersys.User;
 import gr.conference.usersys.UserDBHandler;
@@ -13,6 +13,7 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class AdminRegistrationIntegrationTest {
 
@@ -25,36 +26,44 @@ public class AdminRegistrationIntegrationTest {
         emf = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
         em = emf.createEntityManager();
         em.getTransaction().begin();
-
-        User adminUser = new User();
-        adminUser.setUsername("admin1");
-        adminUser.setRole("ADMIN");
-        adminUser.setPassword("admin1");
-        em.persist(adminUser);
-
-        em.getTransaction().commit();
     }
 
-    
     @AfterAll
     public static void tearDown() {
-    	EntityManager deleteEntityManager = Persistence.createEntityManagerFactory("sys").createEntityManager();
+        EntityManager deleteEntityManager = Persistence.createEntityManagerFactory("sys").createEntityManager();
         deleteEntityManager.getTransaction().begin();
         deleteEntityManager.createQuery("DELETE FROM User u WHERE u.username = 'admin1'").executeUpdate();
         deleteEntityManager.getTransaction().commit();
         deleteEntityManager.close();
-    	
-    	
-    	if (emf != null) {
+
+        if (emf != null) {
             emf.close();
         }
     }
 
-    @Test
-    @DisplayName("Administrator registry")
-    public void testIsAdminRegistered() {
-        boolean isAdminRegistered = UserDBHandler.isAdminRegistered("admin1");
+    @ParameterizedTest
+    @CsvSource({
+        "admin1, ADMIN, true", 
+        "user1, USER, false" // Example of a non-admin registration for testing
+    })
+    @DisplayName("Administrator Registration Parameterized Test")
+    public void testIsAdminRegistered(String username, String role, boolean expected) {
+        // Create a new user
+        User user = new User();
+        user.setUsername(username);
+        user.setRole(role);
+        user.setPassword("testpassword");
+        em.persist(user);
+        em.getTransaction().commit();
 
-        assertTrue(isAdminRegistered, "Admin should be registered");
+        // Check if the user is registered as an admin
+        boolean isAdminRegistered = UserDBHandler.isAdminRegistered(username);
+
+        // Assert based on the expected result
+        if (expected) {
+            assertTrue(isAdminRegistered, "Admin should be registered");
+        } else {
+            assertFalse(isAdminRegistered, "User should not be registered as an admin");
+        }
     }
 }
