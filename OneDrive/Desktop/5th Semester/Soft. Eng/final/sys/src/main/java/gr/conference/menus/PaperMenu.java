@@ -1,65 +1,57 @@
+
 package gr.conference.menus;
 
-import gr.conference.papersys.PaperDBHandler;
-import gr.conference.papersys.RestClient;
-
-import java.util.Scanner;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import gr.conference.confsys.*;
 
 public class PaperMenu {
 
-    public PaperMenu(String username, String confName) {
-        loadPage(username, confName);
+    public PaperMenu(String username) {
+        loadPage(username);
     }
 
-    private void loadPage(String username, String confName) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println(username.toUpperCase() + " you are inside the paper system for conference: " + confName.toUpperCase());
-        System.out.println("1. Create new Paper");
-        System.out.println("2. Update Paper");
-        System.out.println("3. Search Paper");
-        System.out.println("4. Back");
-        System.out.print("> ");
-        int input = scanner.nextInt();
-        scanner.nextLine(); // Consume newline
+    public void loadPage(String username) {
+        // Create the JFrame for the unified input
+        JFrame frame = new JFrame("PaperMenu Input");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(400, 300);
+        frame.setLayout(new GridLayout(4, 2));  // Adjust size as necessary
 
-        switch (input) {
-            case 1:
-                createPaper(confName, username);
-                break;
-            case 2:
-                updatePaper(confName, username);
-                break;
-            case 3:
-                searchPaper(confName, username);
-                break;
-            case 4:
-                new ConferencePage(username, confName);
-                break;
-            default:
-                System.out.println("Invalid input, try again.");
-                loadPage(username, confName);
-                break;
-        }
-    }
+        // Add labels and text fields
+        JLabel inputLabel1 = new JLabel("Input 1: ");
+        JTextField inputField1 = new JTextField(20);
+        JLabel inputLabel2 = new JLabel("Input 2: ");
+        JTextField inputField2 = new JTextField(20);
 
-    private void createPaper(String confName, String username) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Insert Paper title: ");
-        String title = scanner.nextLine();
-        System.out.print("Insert Paper abstract: ");
-        String abstractText = scanner.nextLine();
-        System.out.print("Insert Paper content: ");
-        String content = scanner.nextLine();
+        // Create the submit button
+        JButton submitButton = new JButton("Submit");
 
-        String response = RestClient.paperCreatePost(title, username, confName, abstractText, content);
-        System.out.println(response);
-    }
+        // Add components to the frame
+        frame.add(inputLabel1);
+        frame.add(inputField1);
+        frame.add(inputLabel2);
+        frame.add(inputField2);
+        frame.add(new JLabel());  // Empty cell in grid
+        frame.add(submitButton);
 
-    private void updatePaper(String confName, String username) {
-        // Update paper logic
-    }
+        // Button action to handle submission
+        submitButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String input1 = inputField1.getText();
+                String input2 = inputField2.getText();
 
-    private void searchPaper(String confName, String username) {
-        // Search paper logic
+                if (input1.isEmpty() || input2.isEmpty()) {
+                    JOptionPane.showMessageDialog(frame, "Please fill in both fields.", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    // Here you can handle the input and call other methods based on the logic needed
+                    frame.dispose();  // Close the frame
+                }
+            }
+        });
+
+        // Make the frame visible
+        frame.setVisible(true);
     }
 }

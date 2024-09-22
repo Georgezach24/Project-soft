@@ -1,130 +1,57 @@
+
 package gr.conference.menus;
 
-import java.util.Scanner;
-
-import gr.conference.usersys.RestClient;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import gr.conference.confsys.*;
 
 public class AdminSettingsPage {
-	public AdminSettingsPage()
-	{
-		loadPage();
-	}
-	
-	private void loadPage()
-	{
-		int flag = 0;
-		Scanner scanner = new Scanner(System.in);
-		
-		System.out.println("-----------------------------");
-		System.out.println("1. Information update");
-		System.out.println("2. Password update");
-		System.out.println("3. Delete Account");
-		System.out.println("4. Account status update");
-		System.out.println("5. Back");
-		System.out.print(">");
-		int input = scanner.nextInt();
-		System.out.println("-----------------------------");
-		
-		while(flag ==0)
-		{
-			switch (input)
-			{
-				case 1:
-					flag = 1;
-					infoUpdate();
-					break;
-				case 2:
-					flag = 1;
-					passwordUpdate();
-					break;
-				case 3:
-					flag = 1;
-					deleteAccount();
-					break;
-				case 4:
-					flag = 1;
-					statusUpdate();
-					break;
-				case 5:
-					flag = 1;
-					AdminPage ap = new AdminPage();
-					break;
-				default:
-					flag = 1;
-					loadPage();
-					break;
-			}
-			
-		}
-		
-		AdminPage ap = new AdminPage();
-	}
-	
-	private String infoUpdate()
-	{
-		Scanner scanner = new Scanner(System.in);
-		
-		RestClient.updateRequest();
-		System.out.print("Write the current username: ");
-		String username = scanner.nextLine();
-		System.out.print("Write the new username: ");
-		String usernameString = scanner.nextLine();
-		System.out.print("Write the new Name: ");
-		String nameString = scanner.nextLine();
-		System.out.print("Write the new Surname: ");
-		String surnameString = scanner.nextLine();
-		System.out.print("Write the new Email: ");
-		String emailString = scanner.nextLine();
-		System.out.print("Write the new Phone: ");
-		String phoneString = scanner.nextLine();
-		
-		RestClient.updatePost(username, usernameString, nameString, surnameString, emailString, phoneString);
-		
-		return usernameString;
-		
-	}
-	
-	private void passwordUpdate()
-	{
-		Scanner scanner = new Scanner(System.in);
-		
-		RestClient.passwordUpdateRequest();
-		System.out.print("Write the username: ");
-		String username = scanner.nextLine();
-		System.out.print("Write the old password: ");
-		String oldPassword = scanner.nextLine();
-		System.out.print("Write the new password: ");
-		String newPassword = scanner.nextLine();
-		
-		RestClient.passwordUpdatePost(username , oldPassword, newPassword);
-	}
-	
-	private void deleteAccount()
-	{
-		Scanner scanner = new Scanner(System.in);
-		
-		RestClient.deleteRequest();
-		System.out.print("Write the username: ");
-		String username = scanner.nextLine();
-		System.out.println("Are you sure you want to delete this account?(y/n)");
-		System.out.print(">");
-		String input = scanner.nextLine();
-		
-		if(input.equals("y") || input.equals("Y"))
-		{
-			RestClient.deletePost(username);
-		}
-	}
-	
-	private void statusUpdate()
-	{
-		Scanner scanner = new Scanner(System.in);
-		RestClient.updateStatusRequest();
-		System.out.print("Write the username: ");
-		String username = scanner.nextLine();
-		System.out.print("Write the status(ACTIVE/INACTIVE): ");
-		String status = scanner.nextLine();
-		RestClient.updateStatusPost(username, status);
-	}
-}
 
+    public AdminSettingsPage(String username) {
+        loadPage(username);
+    }
+
+    public void loadPage(String username) {
+        // Create the JFrame for the unified input
+        JFrame frame = new JFrame("AdminSettingsPage Input");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(400, 300);
+        frame.setLayout(new GridLayout(4, 2));  // Adjust size as necessary
+
+        // Add labels and text fields
+        JLabel inputLabel1 = new JLabel("Input 1: ");
+        JTextField inputField1 = new JTextField(20);
+        JLabel inputLabel2 = new JLabel("Input 2: ");
+        JTextField inputField2 = new JTextField(20);
+
+        // Create the submit button
+        JButton submitButton = new JButton("Submit");
+
+        // Add components to the frame
+        frame.add(inputLabel1);
+        frame.add(inputField1);
+        frame.add(inputLabel2);
+        frame.add(inputField2);
+        frame.add(new JLabel());  // Empty cell in grid
+        frame.add(submitButton);
+
+        // Button action to handle submission
+        submitButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String input1 = inputField1.getText();
+                String input2 = inputField2.getText();
+
+                if (input1.isEmpty() || input2.isEmpty()) {
+                    JOptionPane.showMessageDialog(frame, "Please fill in both fields.", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    // Here you can handle the input and call other methods based on the logic needed
+                    frame.dispose();  // Close the frame
+                }
+            }
+        });
+
+        // Make the frame visible
+        frame.setVisible(true);
+    }
+}

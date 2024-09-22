@@ -1,58 +1,57 @@
+
 package gr.conference.menus;
 
-import java.util.Arrays;
-import java.util.Scanner;
-
-import gr.conference.usersys.*;
-
-import java.io.Console;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import gr.conference.confsys.*;
 
 public class RegisterPage {
-	public RegisterPage()
-	{
-		loadPage();
-	}
-	
-	private void loadPage() {
-	    Scanner scanner = new Scanner(System.in);
-	    RestClient.registerRequest();
 
-	    System.out.print("Username: ");
-	    String username = scanner.nextLine();
+    public RegisterPage(String username) {
+        loadPage(username);
+    }
 
-	    System.out.print("Password: ");
-	    String password = readPasswordFromConsole();
+    public void loadPage(String username) {
+        // Create the JFrame for the unified input
+        JFrame frame = new JFrame("RegisterPage Input");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(400, 300);
+        frame.setLayout(new GridLayout(4, 2));  // Adjust size as necessary
 
-	    System.out.print("Rewrite Password: ");
-	    String password_conf = readPasswordFromConsole();
+        // Add labels and text fields
+        JLabel inputLabel1 = new JLabel("Input 1: ");
+        JTextField inputField1 = new JTextField(20);
+        JLabel inputLabel2 = new JLabel("Input 2: ");
+        JTextField inputField2 = new JTextField(20);
 
-	    System.out.print("Email: ");
-	    String email = scanner.nextLine();
+        // Create the submit button
+        JButton submitButton = new JButton("Submit");
 
-	    System.out.print("Phone: ");
-	    String phone = scanner.nextLine();
+        // Add components to the frame
+        frame.add(inputLabel1);
+        frame.add(inputField1);
+        frame.add(inputLabel2);
+        frame.add(inputField2);
+        frame.add(new JLabel());  // Empty cell in grid
+        frame.add(submitButton);
 
-	    RestClient.registerPost(username, password, password_conf, email, phone);
+        // Button action to handle submission
+        submitButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String input1 = inputField1.getText();
+                String input2 = inputField2.getText();
 
-	    
+                if (input1.isEmpty() || input2.isEmpty()) {
+                    JOptionPane.showMessageDialog(frame, "Please fill in both fields.", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    // Here you can handle the input and call other methods based on the logic needed
+                    frame.dispose();  // Close the frame
+                }
+            }
+        });
 
-	    StartingScreen ss = new StartingScreen();//Επιστροφή στην αρχική.
-	    
-	    scanner.close();
-	}
-
-	private String readPasswordFromConsole() 
-	{
-	    Console console = System.console();
-	    if (console != null) {
-	        char[] passwordChars = console.readPassword();
-	        return new String(passwordChars);
-	    } else {
-	        // Fallback for environments where console is not available
-	        Scanner scanner = new Scanner(System.in);
-	        return scanner.nextLine();
-	    }
-	}
-
-			
+        // Make the frame visible
+        frame.setVisible(true);
+    }
 }

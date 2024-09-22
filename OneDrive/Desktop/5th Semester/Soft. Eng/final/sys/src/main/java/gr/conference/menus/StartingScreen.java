@@ -1,62 +1,57 @@
+
 package gr.conference.menus;
 
-import java.util.Scanner;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import gr.conference.confsys.*;
 
 public class StartingScreen {
-	
-	public String user;
-	
-	public StartingScreen()
-	{
-		loadMenu();
-	}
-	
-	private void loadMenu()
-	{
-		Scanner scanner = new Scanner(System.in);
-		int flag = 0;
-		LoginPage lp = new LoginPage();
-		
-		System.out.println("------------------------------------------");
-		System.out.println("WELCOME TO THE CONFERENCE SYSTEM USER PAGE");
-		while(flag == 0)
-		{
-			System.out.println("1. LOGIN");
-			System.out.println("2. REGISTER");
-			System.out.println("3. CONTINUE AS GUEST");
-			System.out.println("4. EXIT");
-			System.out.print("Your input >");
-			int input = scanner.nextInt();
-		
-		
-			switch(input)
-			{
-				case 1:
-					flag = 1;
-					lp.loadPageUser();
-					break;
-				case 2:
-					flag = 1;
-					RegisterPage rp = new RegisterPage();
-					break;
-				case 3:
-					flag = 1;
-					//TODO Φτιάξε τι θα γίνεται σε περίπτωση visitor.
-					break;	
-				case 4:
-					flag = 1;
-					System.exit(0);
-					break;
-				default:
-					flag = 0;
-					break;
-			}
-		}
-		
-	}
 
-	public String getUser() {
-		return user;
-	}
-	
+    public StartingScreen() {
+        loadPage();
+    }
+
+    public void loadPage() {
+        // Create the JFrame for the unified input
+        JFrame frame = new JFrame("StartingScreen Input");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(400, 300);
+        frame.setLayout(new GridLayout(4, 2));  // Adjust size as necessary
+
+        // Add labels and text fields
+        JLabel inputLabel1 = new JLabel("Input 1: ");
+        JTextField inputField1 = new JTextField(20);
+        JLabel inputLabel2 = new JLabel("Input 2: ");
+        JTextField inputField2 = new JTextField(20);
+
+        // Create the submit button
+        JButton submitButton = new JButton("Submit");
+
+        // Add components to the frame
+        frame.add(inputLabel1);
+        frame.add(inputField1);
+        frame.add(inputLabel2);
+        frame.add(inputField2);
+        frame.add(new JLabel());  // Empty cell in grid
+        frame.add(submitButton);
+
+        // Button action to handle submission
+        submitButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String input1 = inputField1.getText();
+                String input2 = inputField2.getText();
+
+                if (input1.isEmpty() || input2.isEmpty()) {
+                    JOptionPane.showMessageDialog(frame, "Please fill in both fields.", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    // Here you can handle the input and call other methods based on the logic needed
+                    frame.dispose();  // Close the frame
+                }
+            }
+        });
+
+        // Make the frame visible
+        frame.setVisible(true);
+    }
 }

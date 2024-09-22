@@ -1,90 +1,57 @@
+
 package gr.conference.menus;
 
-import java.util.Scanner;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-
-import gr.conference.usersys.RestClient;
-import gr.conference.usersys.UserDBHandler;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import gr.conference.confsys.*;
 
 public class LoginPage {
 
-    public String username;
-
-    // Method to load the user login page
-    public void loadPageUser() {
-        Scanner scanner = new Scanner(System.in);
-        String username_local = "";
-        
-        // Loop until loginTries is 0 or the user logs in successfully
-        while (UserDBHandler.loginTries != 0) {
-            System.out.print("Username: ");
-            username_local = scanner.nextLine();
-            System.out.print("Password: ");
-            String password = scanner.nextLine();
-
-            // Call RestClient to handle user login
-            String ret = RestClient.loginPost(username_local, password);
-            
-            // Parse the response using Gson
-            JsonObject response = new Gson().fromJson(ret, JsonObject.class);
-            String responseCode = response.get("responseCode").getAsString();
-            String responseMessage = response.get("responseMessage").getAsString();
-
-            // Check if login was successful
-            if (responseCode.equals("200")) {
-                System.out.println(responseMessage); // Success message
-                username = username_local;
-                UserPage uPage = new UserPage(username);
-                break;
-            } else {
-                System.out.println("Login failed. Try again.");
-                UserDBHandler.loginTries--; // Decrement tries on failure
-            }
-        }
-
-        if (UserDBHandler.loginTries == 0) {
-            System.out.println("Too many failed attempts. Access denied.");
-            StartingScreen ss = new StartingScreen();        }
-
-        scanner.close();
+    public LoginPage(String username) {
+        loadPage(username);
     }
 
-    // Method to load the admin login page
-    public void loadPageAdmin() {
-        Scanner scanner = new Scanner(System.in);
-        String username_local = "";
-        
-        // Loop until loginTries is 0 or the admin logs in successfully
-        while (UserDBHandler.loginTries != 0) {
-            System.out.print("Username: ");
-            username_local = scanner.nextLine();
-            System.out.print("Password: ");
-            String password = scanner.nextLine();
+    public void loadPage(String username) {
+        // Create the JFrame for the unified input
+        JFrame frame = new JFrame("LoginPage Input");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(400, 300);
+        frame.setLayout(new GridLayout(4, 2));  // Adjust size as necessary
 
-            // Call RestClient to handle admin login
-            String ret = RestClient.loginPost(username_local, password); // Use unified login for both admin and users
-            
-            // Parse the response using Gson
-            JsonObject response = new Gson().fromJson(ret, JsonObject.class);
-            String responseCode = response.get("responseCode").getAsString();
-            String responseMessage = response.get("responseMessage").getAsString();
+        // Add labels and text fields
+        JLabel inputLabel1 = new JLabel("Input 1: ");
+        JTextField inputField1 = new JTextField(20);
+        JLabel inputLabel2 = new JLabel("Input 2: ");
+        JTextField inputField2 = new JTextField(20);
 
-            // Check if login was successful
-            if (responseCode.equals("200")) {
-                System.out.println(responseMessage); // Success message
-                AdminPage ap = new AdminPage();
-                break;
-            } else {
-                System.out.println("Admin login failed. Try again.");
-                UserDBHandler.loginTries--; // Decrement tries on failure
+        // Create the submit button
+        JButton submitButton = new JButton("Submit");
+
+        // Add components to the frame
+        frame.add(inputLabel1);
+        frame.add(inputField1);
+        frame.add(inputLabel2);
+        frame.add(inputField2);
+        frame.add(new JLabel());  // Empty cell in grid
+        frame.add(submitButton);
+
+        // Button action to handle submission
+        submitButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String input1 = inputField1.getText();
+                String input2 = inputField2.getText();
+
+                if (input1.isEmpty() || input2.isEmpty()) {
+                    JOptionPane.showMessageDialog(frame, "Please fill in both fields.", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    // Here you can handle the input and call other methods based on the logic needed
+                    frame.dispose();  // Close the frame
+                }
             }
-        }
+        });
 
-        if (UserDBHandler.loginTries == 0) {
-            System.out.println("Too many failed attempts. Access denied.");
-        }
-
-        scanner.close();
+        // Make the frame visible
+        frame.setVisible(true);
     }
 }
