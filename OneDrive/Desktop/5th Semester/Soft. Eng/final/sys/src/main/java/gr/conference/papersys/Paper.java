@@ -40,9 +40,6 @@ public class Paper {
     @JoinColumn(name = "conference_id", nullable = false)
     private Conference conference;
 
-    @ElementCollection
-    @CollectionTable(name = "paper_reviews", joinColumns = @JoinColumn(name = "paper_id"))
-    private List<Review> reviews;
 
     @Column(name = "state", nullable = false)
     private String state;
@@ -111,13 +108,6 @@ public class Paper {
 		this.conference = conference;
 	}
 
-	public List<Review> getReviews() {
-		return reviews;
-	}
-
-	public void setReviews(List<Review> reviews) {
-		this.reviews = reviews;
-	}
 
 	public String getState() {
 		return state;

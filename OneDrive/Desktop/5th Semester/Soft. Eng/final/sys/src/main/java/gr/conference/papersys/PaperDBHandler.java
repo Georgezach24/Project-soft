@@ -100,37 +100,4 @@ public class PaperDBHandler {
         }
         return response;
     }
-
-    public ResponseMessage assignReviewer(Long paperId, User reviewer) {
-        ResponseMessage response = new ResponseMessage();
-        EntityManager em = emf.createEntityManager();
-        try {
-            em.getTransaction().begin();
-            Paper paper = em.find(Paper.class, paperId);
-            if (paper == null) {
-                response.setMessage("Paper not found.");
-                response.setSuccess(false);
-                return response;
-            }
-
-            Review review = new Review();
-            review.setReviewer(reviewer);
-            review.setScore(0);
-            review.setJustification("");
-
-            paper.getReviews().add(review);
-            em.getTransaction().commit();
-            response.setMessage("Reviewer assigned successfully.");
-            response.setSuccess(true);
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            response.setMessage("Error assigning reviewer: " + e.getMessage());
-            response.setSuccess(false);
-        } finally {
-            em.close();
-        }
-        return response;
-    }
 }

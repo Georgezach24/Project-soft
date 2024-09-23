@@ -49,21 +49,4 @@ public class WebResource {
             return Response.status(Response.Status.BAD_REQUEST).entity(response).build();
         }
     }
-
-    @POST
-    @Path("/assignReviewer/{paperId}/{userId}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response assignReviewer(@PathParam("paperId") Long paperId, @PathParam("userId") Long userId) {
-        User reviewer = userDBHandler.findUserById(userId);
-        if (reviewer == null) {
-            return Response.status(Response.Status.NOT_FOUND).entity(new ResponseMessage("User not found", false)).build();
-        }
-        ResponseMessage response = dbHandler.assignReviewer(paperId, reviewer);
-        if (response.isSuccess()) {
-            return Response.ok(response).build();
-        } else {
-            return Response.status(Response.Status.BAD_REQUEST).entity(response).build();
-        }
-    }
-
 }
